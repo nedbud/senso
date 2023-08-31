@@ -1,11 +1,11 @@
 /* eslint-disable @next/next/no-img-element */
-'use client'
+"use client";
 
-import  React, { useRef } from 'react';
-import emailjs from '@emailjs/browser';
+import React, { useRef } from "react";
+import emailjs from "@emailjs/browser";
 import { toast } from "react-toastify";
 
-import 'react-toastify/dist/ReactToastify.css';
+import "react-toastify/dist/ReactToastify.css";
 
 const items = [
   { id: 1, icon: "/assets/Icons/smartphone.svg", name: "+8801731-008075" },
@@ -13,42 +13,46 @@ const items = [
     id: 2,
     icon: "/assets/Icons/envelope.svg",
     name: "info@sensohearingdhaka.com",
-    alt: "Senso-Envelop-Icon"
+    alt: "Senso-Envelop-Icon",
   },
   {
     id: 3,
     icon: "/assets/Icons/home.svg",
     name: "152/2A-2, Rowshan Tower,(2nd Floor), Green Road Signal,Panthpath, Dhaka-1205, Bangladesh",
-    alt: "Senso-Address-Icon"
+    alt: "Senso-Address-Icon",
   },
 ];
 
 export default function Contact() {
-  const form = useRef<any>(null)
+  const form = useRef<any>(null);
 
-  const service_id: string = process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID || ''
-  const template_id: string = process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID || ''
-  const account_id: string = process.env.NEXT_PUBLIC_EMAILJS_ACCOUNT_ID || ''
+  const service_id: string = process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID || "";
+  const template_id: string = process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID || "";
+  const account_id: string = process.env.NEXT_PUBLIC_EMAILJS_ACCOUNT_ID || "";
 
-  const handleSubmit = (e : any) => {
+  const handleSubmit = (e: any) => {
     e.preventDefault();
 
-    const name = form.current.querySelector('input[name="name"]')
-    const phone = form.current.querySelector('input[name="phone"]')
-    const email = form.current.querySelector('input[name="email"]')
-    const message = form.current.querySelector('textarea[name="message"]')
+    const name = form.current.querySelector('input[name="name"]');
+    const phone = form.current.querySelector('input[name="phone"]');
+    const email = form.current.querySelector('input[name="email"]');
+    const message = form.current.querySelector('textarea[name="message"]');
 
-    emailjs.sendForm(service_id, template_id, form?.current, account_id)
-      .then((result) => {
-          if (result.text === 'OK') {
-            toast.success('Your request is successfully saved. Please wait for our confirmation');
-          } else {
-            toast.error('We could not find your request. Please try again later');
-          }
-      }, (error) => {
-          console.log(error.text)
-    });
-  }
+    emailjs.sendForm(service_id, template_id, form?.current, account_id).then(
+      (result) => {
+        if (result.text === "OK") {
+          toast.success(
+            "Your request is successfully saved. Please wait for our confirmation"
+          );
+        } else {
+          toast.error("We could not find your request. Please try again later");
+        }
+      },
+      (error) => {
+        console.log(error.text);
+      }
+    );
+  };
   return (
     <div id="contact" className="bg-gray-100 pb-32 lg:pt-20 lg:pb-40">
       {/* contact form  */}
@@ -58,8 +62,14 @@ export default function Contact() {
             <div className="flex flex-col p-4 lg:px-10 lg:pt-10 lg:pb-20">
               <div className="flex items-center">
                 <div className="bg-red-700 w-14 h-[3px]"></div>
-                <span className="text-theme_blue mx-2 lg:mx-5 text-md lg:text-lg">Say hi,</span>
-                <img src="/assets/Icons/Contact/waving.svg" alt="Senso-Waving-Icon" className="w-5 lg:w-10 animate-bounce" />
+                <span className="text-theme_blue mx-2 lg:mx-5 text-md lg:text-lg">
+                  Say hi,
+                </span>
+                <img
+                  src="/assets/Icons/Contact/waving.svg"
+                  alt="Senso-Waving-Icon"
+                  className="w-5 lg:w-10 animate-bounce"
+                />
               </div>
               <div className="text-start text-xl md:text-5xl font-semibold leading-snug md:leading-none my-2 lg:my-10">
                 <p>
@@ -74,20 +84,24 @@ export default function Contact() {
                 </p>
               </div>
 
-              <ul
-                role="list"
-                className="mt-5 lg:mt-7	text-base lg:text-xl">
+              <ul role="list" className="mt-5 lg:mt-7	text-base lg:text-xl">
                 {items.map((item) => (
                   <li key={item.id} className="flex py-2 lg:py-4 items-start">
-                    <img src={item.icon} alt={item.alt} className="mr-5 lg:mr-10 w-5 lg:w-7" />
-                    <p className="text-start text-sm lg:text-base">{item.name}</p>
+                    <img
+                      src={item.icon}
+                      alt={item.alt}
+                      className="mr-5 lg:mr-10 w-5 lg:w-7"
+                    />
+                    <p className="text-start text-sm lg:text-base">
+                      {item.name}
+                    </p>
                   </li>
                 ))}
               </ul>
             </div>
 
             {/* contact form  */}
-            <div className="lg:py-10 px-6 sm:px-10 xl:p-12">    
+            <div className="lg:py-10 px-6 sm:px-10 xl:p-12">
               <form ref={form} onSubmit={handleSubmit} className="lg:mt-6">
                 <div className="lg:my-8">
                   <div className="lg:mt-1 relative">
@@ -183,4 +197,4 @@ export default function Contact() {
       </div>
     </div>
   );
-};
+}

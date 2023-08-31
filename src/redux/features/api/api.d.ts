@@ -1,6 +1,6 @@
 export interface Api {
-    status: boolean;
-    message: string;
-    code: number;
-    data: {},
+  status: boolean;
+  message: string;
+  code: number;
+  data: {};
 }

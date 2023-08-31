@@ -1,4 +1,5 @@
-'use client'
+/* eslint-disable @next/next/no-img-element */
+"use client";
 
 import React from "react";
 import Image from "next/image";
@@ -50,12 +51,12 @@ export default function Footer() {
           <div className="py-10 absolute -top-20 rounded-t-xl bg-gradient-to-r from-purple-700 to-yellow-600  w-full flex flex-col justify-center px-8">
             <div className="grid grid-cols-12 gap-4 items-center">
               <div className="col-span-12 lg:col-span-5 flex gap-3 items-center justify-center lg:justify-start">
-                <img 
+                <img
                   // priority
-                  src="/assets/Icons/email.svg" 
+                  src="/assets/Icons/email.svg"
                   alt="Senso-Email-Icon"
                   // height={32}
-                  // width={32} 
+                  // width={32}
                 />
                 <p className="text-xs lg:text-lg">Subscribe to Newsletter</p>
               </div>
@@ -89,12 +90,12 @@ export default function Footer() {
           <div className="px-4 pt-16 md:pt-20 lg:pt-4">
             <div className="py-4 md:py-0">
               <div className="flex justify-center lg:justify-start">
-                <img 
-                    className="w-[150px]" 
-                    src='/assets/Images/Common/sensoLogoWhite.png' 
-                    alt="Senso-Logo-Icon" 
-                    // height={100}
-                    // width={100}
+                <img
+                  className="w-[150px]"
+                  src="/assets/Images/Common/sensoLogoWhite.png"
+                  alt="Senso-Logo-Icon"
+                  // height={100}
+                  // width={100}
                 />
               </div>
             </div>
@@ -118,9 +119,15 @@ export default function Footer() {
               </div>
 
               <div className="flex flex-col items-center md:items-start gap-6 font-bold my-6">
-                <Link href="/" className="hover:border-b">FAQ</Link>
-                <Link href="/" className="hover:border-b">Terms of Service</Link>
-                <Link href="/" className="hover:border-b">Privacy Policy</Link>
+                <Link href="/" className="hover:border-b">
+                  FAQ
+                </Link>
+                <Link href="/" className="hover:border-b">
+                  Terms of Service
+                </Link>
+                <Link href="/" className="hover:border-b">
+                  Privacy Policy
+                </Link>
               </div>
 
               <div className="mt-2 lg:mt-20">
@@ -129,13 +136,13 @@ export default function Footer() {
                   {social &&
                     social.map((item, index) => (
                       <a key={index} title={item.name} href={item.link}>
-                        <img 
+                        <img
                           // priority
                           // height={32}
                           // width={32}
-                          src={item.imgSource} 
-                          alt={item.name} 
-                          className="hover:scale-110" 
+                          src={item.imgSource}
+                          alt={item.name}
+                          className="hover:scale-110"
                         />
                       </a>
                     ))}
@@ -163,7 +170,7 @@ export default function Footer() {
                 <span>
                   <img
                     className="h-8 w-8 mx-2 bg-white rounded-full p-1"
-                    src='/assets/Images/Common/developedBy.png'
+                    src="/assets/Images/Common/developedBy.png"
                     alt="Senso-Developed-Icon"
                     // height={100}
                     // width={100}

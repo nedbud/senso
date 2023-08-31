@@ -1,4 +1,4 @@
-'use client'
+"use client";
 
 import { Disclosure } from "@headlessui/react";
 import { MinusSmallIcon, PlusSmallIcon } from "@heroicons/react/24/outline";

@@ -1,5 +1,5 @@
+/* eslint-disable @next/next/no-img-element */
 import React from "react";
-import Image from "next/image";
 
 const partners = [
   {
@@ -22,7 +22,12 @@ export default function Partners() {
       <div className="flex flex-row justify-center mt-2 lg:mt-10">
         {partners &&
           partners.map((partner, index) => (
-            <a title="index" key={index} href="#" className="px-8 py-2 lg:w-1/4 h-[60px] lg:h-[120px] border rounded-md hover:border-red-700">
+            <a
+              title="index"
+              key={index}
+              href="#"
+              className="px-8 py-2 lg:w-1/4 h-[60px] lg:h-[120px] border rounded-md hover:border-red-700"
+            >
               <img
                 className="h-full w-full"
                 src={partner.imgSource}

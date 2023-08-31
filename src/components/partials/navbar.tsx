@@ -1,27 +1,28 @@
-'use client'
+/* eslint-disable @next/next/no-img-element */
+"use client";
 
-import { useState } from "react"
-import Image from "next/image"
-import { Disclosure } from "@headlessui/react"
-import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline"
-import { useRouter } from 'next/navigation'
-import Link from "next/link"
+import { useState } from "react";
+import Image from "next/image";
+import { Disclosure } from "@headlessui/react";
+import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 function classNames(...classes: any) {
-  return classes.filter(Boolean).join(" ")
+  return classes.filter(Boolean).join(" ");
 }
 
 export default function Navbar() {
-  const [currentMenu, setCurrentMenu] = useState('/')
-  const router = useRouter()
+  const [currentMenu, setCurrentMenu] = useState("/");
+  const router = useRouter();
 
   const navigation = [
     { name: "Home", href: "/" },
     { name: "Hearing Aids", href: "/hearing-aids" },
     { name: "About Us", href: "/about-us" },
-    { name: "Services", href: "/#services", },
+    { name: "Services", href: "/#services" },
     { name: "Contact Us", href: "/#contact" },
-  ]
+  ];
   return (
     <Disclosure as="nav" className="shadow-2xl">
       {({ open }) => (
@@ -44,7 +45,7 @@ export default function Navbar() {
                   <div className="flex flex-shrink-0 items-center">
                     <img
                       className="block w-[130px] lg:hidden"
-                      src='/assets/Images/Common/sensoLogo.png'
+                      src="/assets/Images/Common/sensoLogo.png"
                       alt="Senso-Logo-Icon"
                       // priority
                       // width={100}
@@ -52,8 +53,8 @@ export default function Navbar() {
                     />
                     <img
                       className="hidden w-[130px] lg:block cursor-pointer"
-                      onClick={ () => router.push('/') }
-                      src='/assets/Images/Common/sensoLogo.png'
+                      onClick={() => router.push("/")}
+                      src="/assets/Images/Common/sensoLogo.png"
                       alt="Senso-Logo-Icon"
                       // priority
                       // width={100}
@@ -76,14 +77,16 @@ export default function Navbar() {
                                 : "text-gray-900  hover:text-[#CA0508]",
                               "rounded-md px-3 py-2 text-medium font-semibold"
                             )}
-                            aria-current={item.href === currentMenu ? "page" : undefined}
+                            aria-current={
+                              item.href === currentMenu ? "page" : undefined
+                            }
                           >
                             {item.name}
                           </Link>
                         ))}
                       </div>
                       <Link
-                        href='/#contact'
+                        href="/#contact"
                         type="button"
                         className="ml-8 py-3 px-7 rounded-md text-white font-medium bg-[#CA0508] transform transition duration-500 hover:scale-105"
                       >
@@ -127,5 +130,5 @@ export default function Navbar() {
         </>
       )}
     </Disclosure>
-  )
+  );
 }

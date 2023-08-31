@@ -1,28 +1,28 @@
-'use client'
+"use client";
 
-import { A11y, Virtual, EffectCoverflow, Autoplay } from 'swiper/modules';
-import { Swiper } from 'swiper/react';
+import { A11y, Virtual, EffectCoverflow, Autoplay } from "swiper/modules";
+import { Swiper } from "swiper/react";
 
-import 'swiper/css';
-import 'swiper/css/pagination';
-import 'swiper/css/autoplay';
-import 'swiper/css/virtual';
-import 'swiper/css/effect-coverflow';
-import 'swiper/css/effect-fade';
+import "swiper/css";
+import "swiper/css/pagination";
+import "swiper/css/autoplay";
+import "swiper/css/virtual";
+import "swiper/css/effect-coverflow";
+import "swiper/css/effect-fade";
 
 interface CarouselProps {
-  effect: string,
-  spaceBetween: number,
-  slidesPerView: number
+  effect: string;
+  spaceBetween: number;
+  slidesPerView: number;
 }
 
 export default function Carousel({
   children,
   effect,
   spaceBetween,
-  slidesPerView
+  slidesPerView,
 }: {
-  children: React.ReactNode
+  children: React.ReactNode;
 } & CarouselProps) {
   return (
     <section>
@@ -37,4 +37,4 @@ export default function Carousel({
       </Swiper>
     </section>
   );
-};
+}
