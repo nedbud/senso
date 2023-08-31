@@ -14,7 +14,7 @@ interface Props {
 export default function Index({ params }: Props) {
   const { data: response, isLoading: loading } = useGetProductQuery(params);
   const product = response?.data;
-  console.log(product);
+
   return (
     <div>
       {loading ? (

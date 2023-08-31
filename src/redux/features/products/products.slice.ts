@@ -21,7 +21,6 @@ export const productSlice = createSlice({
   initialState,
   reducers: {
     setSeries: (state, action) => {
-      console.log(action.payload);
       state.series = action.payload;
     },
     setBestStatus: (state, action: PayloadAction<boolean>) => {
