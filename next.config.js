@@ -2,7 +2,7 @@
 const nextConfig = {
   output: "export",
   trailingSlash: true,
-  skipTrailingSlashRedirect: true,
+  //   skipTrailingSlashRedirect: true,
   //   serverRuntimeConfig: {
   //     // Will only be available on the server side
   //     mySecret: "secret",
