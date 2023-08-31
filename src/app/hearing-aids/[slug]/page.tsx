@@ -1,5 +1,3 @@
-"use server";
-
 import Index from "@/components/HearingAids/slug/Index";
 import type { Metadata } from "next";
 
@@ -17,19 +15,20 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   ).then((res) => res.json());
 
   return {
-    title: `${product.data.name}`,
-    description: product.data.description,
+    title: "demo",
+    description: product?.data?.description,
     keywords:
-      product.data.description.split(" ") + product.data.description.split("."),
+      product?.data?.description.split(" ") +
+      product?.data?.description.split("."),
     openGraph: {
-      title: product.data.name,
-      description: product.data.description,
+      title: product?.data?.name,
+      description: product?.data?.description,
       url: "https://sensohearingdhaka.com/hearing-aids/" + id,
       siteName:
         "Senso Hearing Centre || Best Hearing centre in Dhaka, Bangladesh",
       images: [
         {
-          url: product.data.avatar,
+          url: product?.data?.avatar,
           width: 800,
           height: 600,
           alt: "Senso hearing centre is the best hearing centre in Bangladesh. Senso Hearing Centre, Dhaka is one of the largest and reputed Hearing centre in Bangladesh. We pride our self at this side for 15 years. We assure your best hearing healthcare. We offer good price range of hearing aids in Bangladesh.",
