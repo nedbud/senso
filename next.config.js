@@ -1,7 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  output: "export",
-  trailingSlash: true,
+  // output: "export",
+  // trailingSlash: true,
   //   skipTrailingSlashRedirect: true,
   //   serverRuntimeConfig: {
   //     // Will only be available on the server side
@@ -11,6 +11,9 @@ const nextConfig = {
   //     // Optional: Port number you want to use, default is 3000
   //     PORT: 3000,
   //   },
+  experimental: {
+    serverActions: true,
+  },
 };
 
 module.exports = nextConfig;
