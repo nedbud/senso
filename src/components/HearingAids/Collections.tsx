@@ -1,6 +1,6 @@
 "use client";
 
-const Collections: React.FC<SeriesInterface> = ({ series, loading }) => {
+const Collections = () => {
   // const currentSeries = store?.getState()?.products.series;
   // const dispatch = useDispatch();
 
