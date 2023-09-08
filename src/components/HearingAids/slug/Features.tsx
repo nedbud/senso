@@ -1,4 +1,3 @@
-import { ProductFeaturesInterface } from "@/redux/features/products/products";
 import Check from "@/components/utils/Check";
 
 interface FeaturesProps {
@@ -6,7 +5,7 @@ interface FeaturesProps {
   name: string;
   price: string;
   description: string;
-  features: ProductFeaturesInterface[];
+  features: any;
 }
 
 const Features: React.FC<FeaturesProps> = ({
@@ -18,7 +17,8 @@ const Features: React.FC<FeaturesProps> = ({
 }) => {
   return (
     <section className="p-4 border shadow-lg rounded-md">
-      <div className="px-4 sm:px-0">
+      asd
+      {/* <div className="px-4 sm:px-0">
         <h3 className="text-base font-semibold leading-7 text-gray-900">
           Product Information
         </h3>
@@ -85,7 +85,7 @@ const Features: React.FC<FeaturesProps> = ({
             </dd>
           </div>
         </dl>
-      </div>
+      </div> */}
     </section>
   );
 };

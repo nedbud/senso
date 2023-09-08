@@ -46,10 +46,7 @@ export default function Index({ product }: ProductInterface) {
                   <div className="my-2">
                     <p>{content.content}</p>
                     <div className="my-4">
-                      <Image
-                        priority
-                        height={500}
-                        width={500}
+                      <img
                         src={content.image}
                         className="h-[200px] lg:h-[400px] w-full rounded-md"
                         alt={content.content}

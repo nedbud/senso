@@ -1,7 +1,6 @@
 "use server";
 
 import Index from "@/components/HearingAids/slug/Index";
-import type { Metadata } from "next";
 import { getProduct } from "@/routes/product";
 
 type Props = {
