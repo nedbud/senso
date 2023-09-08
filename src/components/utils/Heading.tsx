@@ -1,9 +1,9 @@
 "use client";
 
 interface HeadingProps {
-  red: Boolean;
-  heading: String;
-  description: String;
+  red: boolean;
+  heading: string;
+  description: string;
 }
 
 const Heading: React.FC<HeadingProps> = ({ heading, description, red }) => {
