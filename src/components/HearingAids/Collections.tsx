@@ -1,20 +1,13 @@
 "use client";
 
-import { setSeries } from "@/redux/features/products/products.slice";
-import {
-  SeriesInterface,
-  SeriesMapInterface,
-} from "@/redux/features/series/series";
-import { store } from "@/redux/store";
-import { useDispatch } from "react-redux";
-
 const Collections: React.FC<SeriesInterface> = ({ series, loading }) => {
-  const currentSeries = store?.getState()?.products.series;
-  const dispatch = useDispatch();
+  // const currentSeries = store?.getState()?.products.series;
+  // const dispatch = useDispatch();
 
   return (
     <div>
-      <p className="text-2xl text-[#CA0508] font-bold pb-4">Collections</p>
+      <p>asd</p>
+      {/* <p className="text-2xl text-[#CA0508] font-bold pb-4">Collections</p>
       {loading ? (
         <p></p>
       ) : (
@@ -45,7 +38,7 @@ const Collections: React.FC<SeriesInterface> = ({ series, loading }) => {
             </button>
           ))}
         </div>
-      )}
+      )} */}
     </div>
   );
 };

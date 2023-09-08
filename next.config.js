@@ -4,7 +4,10 @@ const nextConfig = {
     serverActions: true,
   },
   images: {
-    domains: ["localhost", "127.0.0.1:8000"],
+    domains: [
+      "https://cloud.sensohearingdhaka.com",
+      "https://test.sensohearingdhaka.com",
+    ],
   },
 };
 

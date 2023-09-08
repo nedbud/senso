@@ -1,9 +1,8 @@
 import { Disclosure } from "@headlessui/react";
 import { ChevronDownIcon } from "@heroicons/react/20/solid";
-import { SeriesSelectInterface } from "@/redux/features/series/series";
 
 interface MobileMenuInterface {
-  series: SeriesSelectInterface;
+  series: any;
   sorts: {
     name: string;
     slug: string;
@@ -13,7 +12,8 @@ interface MobileMenuInterface {
 const MobileMenu: React.FC<MobileMenuInterface> = ({ series, sorts }) => {
   return (
     <div className="block lg:hidden col-span-12">
-      <div className="mx-auto w-full max-w-md rounded-2xl bg-white p-2">
+      asd
+      {/* <div className="mx-auto w-full max-w-md rounded-2xl bg-white p-2">
         <Disclosure>
           {({ open }) => (
             <>
@@ -64,7 +64,7 @@ const MobileMenu: React.FC<MobileMenuInterface> = ({ series, sorts }) => {
             </>
           )}
         </Disclosure>
-      </div>
+      </div> */}
     </div>
   );
 };

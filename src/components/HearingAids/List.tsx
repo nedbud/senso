@@ -16,10 +16,7 @@ const ProductList: React.FC<productsInterface> = ({ products }) => {
             key={index}
             className="hover:cursor-pointer col-span-12 md:col-span-6 lg:col-span-4 border bg-gray-50 rounded-md shadow-sm p-2"
           >
-            <Image
-              priority
-              height={200}
-              width={200}
+            <img
               className="h-[230px] lg:h-[180px] w-[500px] rounded-md object-cover"
               src={item.image}
               alt={item.name}
