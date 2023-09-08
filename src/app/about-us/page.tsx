@@ -1,16 +1,17 @@
 import Hero from "@/components/About/heroSection";
 import History from "@/components/About/historySection";
 import Mission from "@/components/About/missionSection";
-import { Providers } from "@/redux/provider";
+import { getCompanyAbout } from "@/routes/company";
 
-export default function About() {
+export default async function About() {
+  const companyAboutData = getCompanyAbout();
+  const about = await Promise.resolve(companyAboutData);
+
   return (
-    <Providers>
-      <div>
-        <Hero />
-        <Mission />
-        {/* <History /> */}
-      </div>
-    </Providers>
+    <div>
+      <Hero about={about.data} />
+      <Mission />
+      {/* <History /> */}
+    </div>
   );
 }

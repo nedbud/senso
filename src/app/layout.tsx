@@ -2,7 +2,6 @@ import "./globals.css";
 import type { Metadata } from "next";
 import Navbar from "@/components/partials/navbar";
 import Footer from "@/components/partials/footer";
-import { Providers } from "@/redux/provider";
 import { ToastContainer } from "react-toastify";
 
 import "react-toastify/dist/ReactToastify.css";
@@ -99,11 +98,9 @@ export default async function RootLayout({
   return (
     <html lang="en">
       <body suppressHydrationWarning={true}>
-        <Providers>
-          <Navbar />
-          <div className="mt-[5rem]">{children}</div>
-          <Footer />
-        </Providers>
+        <Navbar />
+        <div className="mt-[5rem]">{children}</div>
+        <Footer />
         <ToastContainer />
       </body>
     </html>

@@ -1,5 +1,3 @@
-"use client";
-
 import Hero from "@/components/Home/heroSection";
 import BestProducts from "@/components/Home/bestProductsSection";
 import Service from "@/components/Home/serviceSection";
@@ -7,11 +5,19 @@ import Partners from "@/components/Home/partnerSection";
 import FAQ from "@/components/Home/faqSection";
 import Contact from "@/components/Home/contactSection";
 import Script from "next/script";
-import { useGetDetailsQuery } from "@/redux/features/company/company.api";
+import { getBestProducts } from "@/routes/product";
+import { getCompanySettings } from "@/routes/company";
+import { Suspense } from "react";
+import Loader from "@/components/utils/Loader";
 
-export default function Home() {
-  const { data: response, isLoading: loading } = useGetDetailsQuery("");
-  const company = response?.data;
+export default async function Home() {
+  const bestProductsData = getBestProducts();
+  const companyDetails = getCompanySettings();
+
+  const [bestProducts, company] = await Promise.all([
+    bestProductsData,
+    companyDetails,
+  ]);
 
   return (
     <div>
@@ -31,8 +37,14 @@ export default function Home() {
           </Script>
         </div>
       ) : null}
-      <Hero cover={company?.cover} loading={loading} />
-      <BestProducts />
+      <div className="mt-20 lg:mt-16 h-full lg:h-[500px]">
+        <Suspense fallback={<Loader />} />
+        <Hero cover={company.data.cover} />
+      </div>
+      <section className="bg-[#CA0508] pt-8 px-5 lg:px-0 py-5 lg:pt-24 2xl:pt-64 lg:pb-14">
+        <Suspense fallback={<Loader />} />
+        <BestProducts products={bestProducts.data} />
+      </section>
       <Service />
       <Partners />
       <FAQ />
