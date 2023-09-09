@@ -4,7 +4,6 @@ import Cover from "./Cover";
 import Images from "./ImagesSection";
 import Features from "./Features";
 import { ProductInterface } from "@/routes/product";
-import Image from "next/image";
 
 export default function Index({ product }: ProductInterface) {
   return (

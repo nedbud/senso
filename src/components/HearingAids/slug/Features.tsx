@@ -17,8 +17,7 @@ const Features: React.FC<FeaturesProps> = ({
 }) => {
   return (
     <section className="p-4 border shadow-lg rounded-md">
-      asd
-      {/* <div className="px-4 sm:px-0">
+      <div className="px-4 sm:px-0">
         <h3 className="text-base font-semibold leading-7 text-gray-900">
           Product Information
         </h3>
@@ -66,26 +65,24 @@ const Features: React.FC<FeaturesProps> = ({
             </dt>
             <dd className="mt-1 text-sm leading-4 text-gray-700 sm:col-span-2 sm:mt-0">
               <ul className="space-y-4 text-left text-gray-500 cursor-default">
-                {features.map(
-                  (item: ProductFeaturesInterface, index: number) => (
-                    <li key={index}>
-                      <div className="flex items-center space-x-3 group">
-                        <Check
-                          strokeWidth={3.5}
-                          className="flex-shrink-0 w-3.5 h-3.5 group-hover:scale-125 duration-700 transition-all group-hover:stroke-red-600"
-                        />
-                        <p className="text-primary/70 group-hover:scale-110 font-bold duration-700 transition-all">
-                          {item.value}
-                        </p>
-                      </div>
-                    </li>
-                  )
-                )}
+                {features.map((item: any, index: number) => (
+                  <li key={index}>
+                    <div className="flex items-center space-x-3 group">
+                      <Check
+                        strokeWidth={3.5}
+                        className="flex-shrink-0 w-3.5 h-3.5 group-hover:scale-125 duration-700 transition-all group-hover:stroke-red-600"
+                      />
+                      <p className="text-primary/70 group-hover:scale-110 font-bold duration-700 transition-all">
+                        {item.value}
+                      </p>
+                    </div>
+                  </li>
+                ))}
               </ul>
             </dd>
           </div>
         </dl>
-      </div> */}
+      </div>
     </section>
   );
 };
