@@ -1,14 +1,16 @@
 "use client";
 
 import Link from "next/link";
-import React from "react";
-import Carousel from "../utils/Carousel";
+import React, { Suspense } from "react";
 import Heading from "../utils/Heading";
 import { SwiperSlide } from "swiper/react";
 import Card from "./Card__bestProducts";
 import { getBestProductsInterface } from "@/routes/product";
+import Loader from "../utils/Loader";
 
 const BestProducts: React.FC<getBestProductsInterface> = ({ products }) => {
+  const Slider = React.lazy(() => import("../utils/Carousel"));
+
   return (
     <div className="flex flex-col space-y-5 lg:space-y-10">
       <Heading
@@ -16,24 +18,26 @@ const BestProducts: React.FC<getBestProductsInterface> = ({ products }) => {
         heading="Best Selling Products"
         description="Bestselling products excel with innovation, quality, and consumer love. They captivate, inspire, and enhance lives. The epitome of excellence, they leave a lasting impression, making our lives better in every way."
       />
-      <div className="hidden lg:block">
-        <Carousel effect={"coverflow"} spaceBetween={20} slidesPerView={4}>
-          {products.map((product: any, index: number) => (
-            <SwiperSlide key={index} virtualIndex={index}>
-              <Card index={index} item={product} />
-            </SwiperSlide>
-          ))}
-        </Carousel>
-      </div>
-      <div className="block lg:hidden">
-        <Carousel effect={""} spaceBetween={20} slidesPerView={2}>
-          {products.map((product: any, index: number) => (
-            <SwiperSlide key={index} virtualIndex={index}>
-              <Card index={index} item={product} />
-            </SwiperSlide>
-          ))}
-        </Carousel>
-      </div>
+      <Suspense fallback={<Loader />}>
+        <div className="hidden lg:block">
+          <Slider effect={"coverflow"} spaceBetween={20} slidesPerView={4}>
+            {products.map((product: any, index: number) => (
+              <SwiperSlide key={index} virtualIndex={index}>
+                <Card index={index} item={product} />
+              </SwiperSlide>
+            ))}
+          </Slider>
+        </div>
+        <div className="block lg:hidden">
+          <Slider effect={""} spaceBetween={20} slidesPerView={2}>
+            {products.map((product: any, index: number) => (
+              <SwiperSlide key={index} virtualIndex={index}>
+                <Card index={index} item={product} />
+              </SwiperSlide>
+            ))}
+          </Slider>
+        </div>
+      </Suspense>
       <div className="justify-center items-center text-center w-full">
         <Link
           href="/hearing-aids"

@@ -7,8 +7,6 @@ import Contact from "@/components/Home/contactSection";
 import Script from "next/script";
 import { getBestProducts } from "@/routes/product";
 import { getCompanySettings } from "@/routes/company";
-import { Suspense } from "react";
-import Loader from "@/components/utils/Loader";
 
 export default async function Home() {
   const bestProductsData = getBestProducts();
@@ -38,13 +36,10 @@ export default async function Home() {
         </div>
       ) : null}
       <div className="mt-20 lg:mt-16 h-full lg:h-[500px]">
-        <Suspense fallback={<Loader />} />
         <Hero cover={company.data.cover} />
       </div>
       <section className="bg-[#CA0508] pt-8 px-5 lg:px-0 py-5 lg:pt-24 2xl:pt-64 lg:pb-14">
-        <Suspense fallback={<Loader />}>
-          <BestProducts products={bestProducts.data} />
-        </Suspense>
+        <BestProducts products={bestProducts.data} />
       </section>
       <Service />
       <Partners />
