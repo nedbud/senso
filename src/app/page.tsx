@@ -42,8 +42,9 @@ export default async function Home() {
         <Hero cover={company.data.cover} />
       </div>
       <section className="bg-[#CA0508] pt-8 px-5 lg:px-0 py-5 lg:pt-24 2xl:pt-64 lg:pb-14">
-        <Suspense fallback={<Loader />} />
-        <BestProducts products={bestProducts.data} />
+        <Suspense fallback={<Loader />}>
+          <BestProducts products={bestProducts.data} />
+        </Suspense>
       </section>
       <Service />
       <Partners />
