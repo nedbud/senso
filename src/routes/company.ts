@@ -11,7 +11,7 @@ export interface getCompanySettingsInterface {
 export async function getCompanySettings() {
   const res = await fetch(
     `${process.env.NEXT_PUBLIC_BASE_URL}/api/senso/company-settings/1`,
-    { cache: "no-store" }
+    { cache: "force-cache" }
   );
   return res.json();
 }
@@ -28,7 +28,8 @@ export interface getCompanyAboutInterface {
 
 export async function getCompanyAbout() {
   const res = await fetch(
-    `${process.env.NEXT_PUBLIC_BASE_URL}/api/senso/company-abouts/select`
+    `${process.env.NEXT_PUBLIC_BASE_URL}/api/senso/company-abouts/select`,
+    { cache: "force-cache" }
   );
   return res.json();
 }

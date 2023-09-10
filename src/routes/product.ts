@@ -78,3 +78,18 @@ export async function getProduct(slug: string) {
 
   return res.json();
 }
+
+export interface SeriesInterface {
+  series: {
+    name: string;
+  }[];
+}
+
+export async function getSeries() {
+  const res = await fetch(
+    `${process.env.NEXT_PUBLIC_BASE_URL}/api/senso/series/select`,
+    { cache: "no-store" }
+  );
+
+  return res.json();
+}

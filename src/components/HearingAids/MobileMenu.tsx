@@ -12,7 +12,6 @@ interface MobileMenuInterface {
 const MobileMenu: React.FC<MobileMenuInterface> = ({ series, sorts }) => {
   return (
     <div className="block lg:hidden col-span-12">
-      asd
       {/* <div className="mx-auto w-full max-w-md rounded-2xl bg-white p-2">
         <Disclosure>
           {({ open }) => (

@@ -12,7 +12,7 @@ const Images: React.FC<ImagesProps> = ({ images, name }) => {
         {/* <p className="text-blue-500 cursor-pointer">See all</p> */}
       </div>
       <div className="grid grid-cols-12 gap-2">
-        {/* {images.map((image: ProductImagesInterface, index: number) => (
+        {images.map((image: any, index: number) => (
           <div key={index} className="col-span-4">
             <img
               className="h-[70px] lg:h-[100px] w-[100px] lg:w-[150px] rounded-sm cursor-pointer"
@@ -20,7 +20,7 @@ const Images: React.FC<ImagesProps> = ({ images, name }) => {
               alt={name}
             />
           </div>
-        ))} */}
+        ))}
       </div>
     </aside>
   );
