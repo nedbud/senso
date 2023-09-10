@@ -37,7 +37,7 @@ export default async function HearingAids() {
     <Providers>
       <div className="mt-24 mx-auto max-w-7xl px-4 py-2 lg:py-8">
         <div className="grid grid-cols-12 gap-4">
-          {/* <MobileMenu series={series} sorts={sorts} /> */}
+          <MobileMenu series={series.data} sorts={sorts} />
           <aside className="hidden lg:block col-span-2">
             <div className="sticky top-24">
               <Collections series={series.data} />
