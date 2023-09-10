@@ -54,10 +54,10 @@ export const metadata: Metadata = {
       "Senso Hearing Centre || Best Hearing centre in Dhaka, Bangladesh",
     images: [
       {
-        url: "https://sensohearingdhaka.com/assets/Images/Common/bg.jpg",
+        url: "https://sensohearingdhaka.com/assets/Images/temp/Business_Excellence_award_2019.jpeg",
         width: 800,
         height: 600,
-        alt: "Senso hearing centre is the best hearing centre in Bangladesh. Senso Hearing Centre, Dhaka is one of the largest and reputed Hearing centre in Bangladesh. We pride our self at this side for 15 years. We assure your best hearing healthcare. We offer good price range of hearing aids in Bangladesh.",
+        alt: "senso hearing centre is the best hearing centre in Bangladesh. Getting Business Excellence award in 2019",
       },
     ],
     locale: "en_US",

@@ -73,8 +73,8 @@ export const metadata: Metadata = {
       },
       {
         url: "https://sensohearingdhaka.com/assets/Images/temp/Business_Excellence_award_2019.jpeg",
-        width: 1800,
-        height: 1600,
+        width: 800,
+        height: 600,
         alt: "senso hearing centre is the best hearing centre in Bangladesh. Getting Business Excellence award in 2019",
       },
     ],
