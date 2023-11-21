@@ -9,7 +9,7 @@ import Link from "next/link";
 const social = [
   {
     name: "facebook",
-    link: "/",
+    link: "https://www.facebook.com/sensobd",
     imgSource: "/assets/Icons/facebook.svg",
   },
   {
@@ -103,7 +103,7 @@ export default function Footer() {
             <div className="flex flex-col md:flex-row items-center md:items-start justify-between text-sm">
               <div className="">
                 {/* address */}
-                <div className="flex flex-col items-center md:items-start gap-2 my-6 w-72">
+                <div className="flex flex-col items-center md:items-start gap-2 mt-6 mb-4 w-72">
                   <p className="uppercase font-bold">Address</p>
                   <p className="text-center lg:text-left">
                     152/2A-2, Rowshan Tower,(2nd Floor), Green Road
@@ -112,13 +112,25 @@ export default function Footer() {
                 </div>
 
                 {/* email */}
-                <div className="flex flex-col items-center md:items-start gap-2">
+                <div className="flex flex-col items-center md:items-start gap-2 mb-4">
                   <p className="uppercase font-bold">Email</p>
                   <p className="">info@sensohearingdhaka.com</p>
+                </div>
+
+                {/* Phone */}
+                <div className="flex flex-col items-center md:items-start gap-2">
+                  <p className="uppercase font-bold">Mobile</p>
+                  <p className="">+8801731-008075</p>
                 </div>
               </div>
 
               <div className="flex flex-col items-center md:items-start gap-6 font-bold my-6">
+                <Link href="/hearing-aids" className="hover:border-b">
+                  Hearing Aids
+                </Link>
+                <Link href="/#services" className="hover:border-b">
+                  Services
+                </Link>
                 <Link href="/" className="hover:border-b">
                   FAQ
                 </Link>
@@ -135,7 +147,7 @@ export default function Footer() {
                 <div className="flex gap-2">
                   {social &&
                     social.map((item, index) => (
-                      <a key={index} title={item.name} href={item.link}>
+                      <a key={index} title={item.name} href={item.link} target="_blank">
                         <img
                           // priority
                           // height={32}
