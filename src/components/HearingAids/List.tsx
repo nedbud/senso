@@ -46,11 +46,20 @@ const ProductList = () => {
               key={index}
               className="hover:cursor-pointer col-span-12 md:col-span-6 lg:col-span-4 border bg-gray-50 rounded-md shadow-sm p-2"
             >
-              <img
+              {item.image.length > 50 ? <img
                 className="h-[230px] lg:h-[180px] w-[500px] rounded-md object-cover"
                 src={item.image}
                 alt={item.name}
-              />
+              /> 
+              : 
+              <img
+                className="h-[230px] lg:h-[180px] w-[500px] rounded-md object-cover"
+                  // src={item.image}
+                  src="/assets/Images/Common/senso_404_not_found.png"
+                  alt={item.name}
+                />
+              }
+
               <p className="text-[#CA0508] text-lg pt-2 font-bold">
                 {item.name}
               </p>
