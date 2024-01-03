@@ -35,11 +35,22 @@ export default function Card({ item, index }: CardItem) {
           {/* <div className="w-10 h-6 absolute border-4 border-red-900/50 bg-transparent rounded-lg bottom-0 m-3 animate-spin"></div> */}
         </div>
       </div>
-      <img
+
+      {item.image.length > 50 ? <img
+        className="w-full h-4/6 !w-4/6 object-fill rounded-md z-20 mx-auto lg:mt-10 -rotate-6 hover:rotate-0 ease-in-out duration-300 scale-110 relative"
         src={item.image}
         alt={item.name}
+      /> 
+      : 
+      <img
         className="w-full h-4/6 !w-4/6 object-fill rounded-md z-20 mx-auto lg:mt-10 -rotate-6 hover:rotate-0 ease-in-out duration-300 scale-110 relative"
-      />
+          // src={item.image}
+          src="/assets/Images/Common/senso_404_not_found.png"
+          alt={item.name}
+        />
+      }
+
+
       <div className="!mt-4 mb-2 lg:mt-5 flex flex-col space-y-2 items-center px-2 lg:px-10 h-full text-center">
         <h3
           className={`font-bold capitalize
