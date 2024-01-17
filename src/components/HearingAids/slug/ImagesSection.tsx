@@ -15,7 +15,7 @@ const Images: React.FC<ImagesProps> = ({ images, name }) => {
         {images.map((image: any, index: number) => (
           <div key={index} className="col-span-4">
             <img
-              className="h-[70px] lg:h-[100px] w-[100px] lg:w-[150px] rounded-sm cursor-pointer"
+              className="h-[100px] lg:h-[150px] w-[100px] lg:w-[150px] rounded-lg cursor-pointer border hover:border-none hover:scale-150 transition-all delay-50"
               src={image.path}
               alt={name}
             />
