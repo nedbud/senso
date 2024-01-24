@@ -44,7 +44,7 @@ const ProductList = () => {
             <Link
               href={"/hearing-aids/" + item.slug}
               key={index}
-              className="hover:cursor-pointer col-span-12 md:col-span-6 lg:col-span-4 border bg-gray-50 rounded-md shadow-sm p-2"
+              className="hover:cursor-pointer col-span-12 md:col-span-6 lg:col-span-4 border bg-gray-50 hover:border-red-600 rounded-md shadow-sm p-2"
             >
               {item.image.length > 50 ? <img
                 className="h-[230px] lg:h-[180px] w-[500px] rounded-md object-cover"
@@ -63,7 +63,8 @@ const ProductList = () => {
               <p className="text-[#CA0508] text-lg pt-2 font-bold">
                 {item.name}
               </p>
-              <p>{item.price.split(".")[0]} BDT</p>
+              {/* <p>{item.price.split(".")[0]} BDT</p> */}
+      
             </Link>
           ))}
       </div>
