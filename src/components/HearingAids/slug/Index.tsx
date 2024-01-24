@@ -47,7 +47,7 @@ export default function Index({ product }: ProductInterface) {
                     <div className="my-4">
                       <img
                         src={content.image}
-                        className="h-[200px] lg:h-[400px] w-full rounded-md"
+                        className="w-full rounded-md"
                         alt={content.content}
                       />
                     </div>
