@@ -48,7 +48,8 @@ const Features: React.FC<FeaturesProps> = ({
               Price
             </dt>
             <dd className="mt-1 text-sm leading-4 text-gray-700 sm:col-span-2 sm:mt-0">
-              <a href="/#contact" className="text-violet-600 hover:underline cursor-pointer">Please Contact with Us</a>
+              <a href="/#contact" className="text-violet-600 hover:underline cursor-pointer">{price}</a>
+              {/* <a href="/#contact" className="text-violet-600 hover:underline cursor-pointer">Please Contact with Us</a> */}
             </dd>
           </div>
           <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">

@@ -63,7 +63,7 @@ const ProductList = () => {
               <p className="text-[#CA0508] text-lg pt-2 font-bold">
                 {item.name}
               </p>
-              {/* <p>{item.price.split(".")[0]} BDT</p> */}
+              <p>{item.price.split(".")[0]} BDT</p>
       
             </Link>
           ))}
