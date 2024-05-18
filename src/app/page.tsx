@@ -64,7 +64,7 @@ export default async function Home() {
           </Script>
         </div>
       ) : null}
-      <div className="mt-20 lg:mt-16 h-full lg:h-[500px]">
+      <div className="mt-20 lg:mt-16 h-full lg:h-[500px] bg-[#CA0508]">
         <Hero cover={company.data.cover} />
       </div>
       <section className="bg-[#CA0508] pt-8 px-5 lg:px-0 py-5 lg:pt-24 2xl:pt-64 lg:pb-14">
