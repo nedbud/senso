@@ -12,7 +12,8 @@ export interface getBestProductsInterface {
 
 export async function getBestProducts() {
   const res = await fetch(
-    `${process.env.NEXT_PUBLIC_BASE_URL}/api/senso/products/list?best=true`
+    `${process.env.NEXT_PUBLIC_BASE_URL}/api/senso/products/list?best=true`,
+    { cache: "no-store" }
   );
 
   return res.json();
