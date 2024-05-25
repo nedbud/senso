@@ -7,8 +7,10 @@ import { Metadata } from "next";
 export const metadata: Metadata = {
   title: "About Us",
   description:
-    "Senso hearing centre is the best hearing centre in Bangladesh. Senso Hearing Centre, Dhaka is one of the largest and reputed Hearing centre in Bangladesh. We pride our self at this side for 15 years. We assure your best hearing healthcare. We offer good price range of hearing aids in Bangladesh.",
+    "Senso hearing centre is the best hearing centre in Bangladesh. Senso Hearing Centre, Dhaka is one of the largest and reputed Hearing centre in Bangladesh. We pride our self at this side for 15 years. We assure your best hearing healthcare. We are authorized partner of the world’s leading hearing aid brands Resound. All the Resound Hearing aid we provide. We offer best hearing aid price in Bangladesh.",
   keywords: [
+    "resound hearing aid",
+    "resound hearing aid price",
     "hearing",
     "aids aid",
     "aids hearing",
@@ -31,7 +33,6 @@ export const metadata: Metadata = {
     "for hearing aids",
     "hearing aids",
     "what are hearing aids",
-    "aid hearing",
     "which hearing aid",
     "the hearing aid",
     "what is hearing aid",
@@ -48,7 +49,7 @@ export const metadata: Metadata = {
     "hearing aid devices hearingaid",
     "resound",
     "hearing device",
-    "re sound",
+    "resound",
     "hearing aid device",
     "test hearing",
     "where can i get a hearing test how to test hearing",

@@ -10,8 +10,10 @@ import { Metadata } from "next";
 export const metadata: Metadata = {
   title: "Products",
   description:
-    "Senso hearing centre is the best hearing centre in Bangladesh. Senso Hearing Centre, Dhaka is one of the largest and reputed Hearing centre in Bangladesh. We pride our self at this side for 15 years. We assure your best hearing healthcare. We offer good price range of hearing aids in Bangladesh.",
+    "Resound hearind aid price. Senso Hearing centre is authorized partner of the world’s leading hearing aid brands Resound. All the Resound Hearing aid we provide. Senso hearing centre is the best hearing centre in Bangladesh. Senso Hearing Centre, Dhaka is one of the largest and reputed Hearing centre in Bangladesh. We offer best hearing aid price in Bangladesh.",
   keywords: [
+    "resound hearing aid",
+    "resound hearind aid price",
     "hearing",
     "aids aid",
     "aids hearing",
@@ -62,7 +64,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Products || Senso Hearing Centre",
     description:
-      "Senso hearing centre is the best hearing centre in Bangladesh. Senso Hearing Centre, Dhaka is one of the largest and reputed Hearing centre in Bangladesh. We pride our self at this side for 15 years. We assure your best hearing healthcare. We offer good price range of hearing aids in Bangladesh.",
+      "Resound hearind aid price. Senso Hearing centre is authorized partner of the world’s leading hearing aid brands Resound. All the Resound Hearing aid we provide. Senso hearing centre is the best hearing centre in Bangladesh. Senso Hearing Centre, Dhaka is one of the largest and reputed Hearing centre in Bangladesh. We offer best hearing aid price in Bangladesh.",
     url: "https://sensohearingdhaka.com/hearing-aids",
     siteName:
       "Senso Hearing Centre || Best Hearing centre in Dhaka, Bangladesh",
@@ -71,7 +73,7 @@ export const metadata: Metadata = {
         url: "https://sensohearingdhaka.com/assets/Images/Common/bg.jpg",
         width: 800,
         height: 600,
-        alt: "Senso hearing centre is the best hearing centre in Bangladesh. Senso Hearing Centre, Dhaka is one of the largest and reputed Hearing centre in Bangladesh. We pride our self at this side for 15 years. We assure your best hearing healthcare. We offer good price range of hearing aids in Bangladesh.",
+        alt: "Resound hearind aid price. Senso Hearing centre is authorized partner of the world’s leading hearing aid brands Resound. All the Resound Hearing aid we provide. Senso hearing centre is the best hearing centre in Bangladesh. Senso Hearing Centre, Dhaka is one of the largest and reputed Hearing centre in Bangladesh. We offer best hearing aid price in Bangladesh.",
       },
     ],
     locale: "en_US",
