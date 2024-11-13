@@ -106,8 +106,7 @@ export default function Footer() {
                 <div className="flex flex-col items-center md:items-start gap-2 mt-6 mb-4 w-72">
                   <p className="uppercase font-bold">Address</p>
                   <p className="text-center lg:text-left">
-                    152/2A-2, Rowshan Tower,(2nd Floor), Green Road
-                    Signal,Panthpath, Dhaka-1205, Bangladesh
+                    57/9, Artisan Center (4th floor), Panthapath, Dhaka-1205
                   </p>
                 </div>
 
