@@ -51,7 +51,7 @@ export default function Card({ item, index }: CardItem) {
       }
 
 
-      <div className="!mt-4 mb-2 lg:mt-5 flex flex-col space-y-2 items-center px-2 lg:px-10 h-full text-center">
+      <div className="!mt-4 mb-2 lg:mt-5 flex flex-col space-y-2 items-center px-1 lg:px-10 h-full text-center">
         <h3
           className={`font-bold capitalize
           ${
@@ -61,11 +61,19 @@ export default function Card({ item, index }: CardItem) {
               ? "text-green-700"
               : "text-[#CA0508]"
           }
-          text-[8px] lg:text-lg`}
+          text-[8px] lg:text-base`}
         >
           {item.name}
         </h3>
-        <p className="text-[7px] lg:text-xs font-normal">{item.description}</p>
+        <p className="text-[7px] md:text-xs font-normal hidden md:block">
+          {item.description.split(" ").slice(0, 40).join(" ")}
+          {item.description.split(" ").length > 40 && "..."}
+        </p>
+
+        <p className="text-[7px] md:text-xs font-normal block md:hidden">
+          {item.description.split(" ").slice(0, 20).join(" ")}
+          {item.description.split(" ").length > 20 && "..."}
+        </p>
         <div className="flex flex-row justify-between text-[7px] lg:text-sm w-full mt-10">
           <h5>
             <span className="text-stone-800 font-medium">Brand: </span>

@@ -18,7 +18,7 @@ const items = [
   {
     id: 3,
     icon: "/assets/Icons/home.svg",
-    name: "152/2A-2, Rowshan Tower,(2nd Floor), Green Road Signal,Panthpath, Dhaka-1205, Bangladesh",
+    name: "57/9, Artisan Center (4th floor), Panthapath, Dhaka-1205",
     alt: "Senso-Address-Icon",
   },
 ];
