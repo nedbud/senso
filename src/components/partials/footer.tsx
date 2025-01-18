@@ -119,7 +119,7 @@ export default function Footer() {
                 {/* Phone */}
                 <div className="flex flex-col items-center md:items-start gap-2">
                   <p className="uppercase font-bold">Mobile</p>
-                  <p className="">+8801731-008075</p>
+                  <p className="">+8801322-926207, +8801731-008075</p>
                 </div>
               </div>
 
