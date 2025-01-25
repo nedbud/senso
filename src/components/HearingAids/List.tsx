@@ -26,6 +26,10 @@ const ProductList = () => {
     (state) => state.productSearchSlice.latest
   );
 
+  const formatPrice = (price: number): string => {
+    return price.toLocaleString('en-US');
+  };
+
   const sort: string = useAppSelector((state) => state.productSearchSlice.sort);
 
   useEffect(() => {
@@ -60,10 +64,11 @@ const ProductList = () => {
                 />
               }
 
-              <p className="text-[#CA0508] text-lg pt-2 font-bold">
+              <p className="text-[#CA0508] text-base pt-2 font-semibold">
                 {item.name}
               </p>
-              <p>{item.price.split(".")[0]} BDT</p>
+              {/* <p>{item.price.split(".")[0]} BDT</p> */}
+              <p className="mt-1 text-base text-primary font-bold">{formatPrice(parseFloat(item.price))} BDT</p>
       
             </Link>
           ))}
