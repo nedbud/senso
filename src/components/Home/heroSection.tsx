@@ -17,7 +17,7 @@ const Hero: React.FC<Props> = ({ cover }) => {
         Contact Us
       </a>
       <img
-        className="h-[65vh] w-full object-cover"
+        className="h-auto lg:h-[65vh] w-full"
         src={cover}
         alt="Senso Hero Image"
       />
