@@ -8,7 +8,7 @@ import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 const items = [
-  { id: 1, icon: "/assets/Icons/smartphone.svg", name: "+8801322-926207, +8801731-008075" },
+  { id: 1, icon: "/assets/Icons/smartphone.svg", name: "02-48114837, +8801322-926207, +8801731-008075" },
   {
     id: 2,
     icon: "/assets/Icons/envelope.svg",
