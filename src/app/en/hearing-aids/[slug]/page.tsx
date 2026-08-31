@@ -21,17 +21,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     .replace(/\s*hearing aid price in bangladesh\s*$/i, "")
     .trim();
 
-  // The old version built `keywords` by concatenating
-  // description.split(" ") + description.split(".") + description, which
-  // produced one enormous comma-joined string. Google has ignored the
-  // keywords tag since 2009; the description is what matters.
   return {
     title: `${display} — ${formatTaka(product.price)}`,
     description:
       product.description?.slice(0, 300) ||
-      `${display}. ReSound কানের মেশিন, দাম ${formatTaka(product.price)}। সেনসো হিয়ারিং সেন্টার, পান্থপথ, ঢাকা।`,
+      `${display}. ReSound hearing aid, ${formatTaka(product.price)}. Senso Hearing Centre, Panthapath, Dhaka.`,
     alternates: {
-      canonical: `/hearing-aids/${params.slug}`,
+      canonical: `/en/hearing-aids/${params.slug}`,
       languages: altLanguages(
         `/hearing-aids/${params.slug}`,
         `/en/hearing-aids/${params.slug}`
@@ -39,6 +35,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     },
     openGraph: {
       type: "website",
+      locale: "en_US",
       title: display,
       description: product.description?.slice(0, 300),
       images: product.avatar ? [{ url: product.avatar }] : undefined,
@@ -48,5 +45,5 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function Page({ params }: Props) {
   const res = await getProduct(params.slug);
-  return <ProductView product={res?.data ?? null} lang="bn" slug={params.slug} />;
+  return <ProductView product={res?.data ?? null} lang="en" slug={params.slug} />;
 }

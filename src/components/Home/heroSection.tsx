@@ -1,28 +1,48 @@
-"use client";
+import { dict, type Lang } from "@/lib/i18n";
+import { SITE } from "@/lib/site";
+import { WhatsAppButton, CallButton } from "@/components/ui/Buttons";
+import OpenStatus from "@/components/ui/OpenStatus";
 
-import React from "react";
-import Image from "next/image";
+/**
+ * The hero used to be a single JPEG from the CMS with an absolutely
+ * positioned "Contact Us" button at hardcoded pixel offsets, hidden below
+ * lg. Every word of the message lived inside the image, so none of it
+ * existed as text a search engine or a screen reader could read.
+ */
+export default function Hero({ lang }: { lang: Lang }) {
+  const d = dict(lang);
 
-interface Props {
-  cover: string;
-}
-
-const Hero: React.FC<Props> = ({ cover }) => {
   return (
-    <div className="relative">
-      <a
-        href="tel:+8801731008075"
-        className="hidden lg:block absolute bottom-[60px] right-[270px] 2xl:bottom-[80px] 2xl:right-[380px] z-10 text-gray-900 bg-white hover:border hover:border-white hover:bg-red-600 hover:text-white text-base font-bold rounded-full py-2 px-6"
-      >
-        Contact Us
-      </a>
-      <img
-        className="h-auto lg:h-[65vh] w-full"
-        src={cover}
-        alt="Senso Hero Image"
-      />
-    </div>
-  );
-};
+    <section className="mx-auto max-w-3xl px-4 pb-10 pt-8 sm:pt-12 lg:px-8">
+      <div className="flex flex-col gap-4">
+        <p className="font-display font-semibold text-[15px] text-brand">
+          {d.hero.eyebrow}
+        </p>
 
-export default Hero;
+        <h1 className="text-[clamp(30px,6.4vw,44px)] leading-[1.32] text-ink">
+          {d.hero.title}
+        </h1>
+
+        <p className="max-w-prose text-xl text-ink-2">{d.hero.lede}</p>
+
+        <div className="mt-1 grid gap-2.5 sm:grid-cols-2">
+          <WhatsAppButton
+            message={d.wa.appointment}
+            label={d.hero.ctaWhatsapp}
+            variant="brand"
+          />
+          <CallButton variant="outline" />
+        </div>
+
+        <div className="rounded-lg border border-line border-l-4 border-l-brand bg-paper-surface px-4 py-4 text-[17px] text-ink-2">
+          <strong className="font-semibold text-ink">
+            {d.hero.phoneNoteTitle}
+          </strong>{" "}
+          {d.hero.phoneNote}
+        </div>
+
+        <OpenStatus lang={lang} />
+      </div>
+    </section>
+  );
+}

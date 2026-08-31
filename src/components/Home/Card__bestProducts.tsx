@@ -1,132 +1,66 @@
-/* eslint-disable @next/next/no-img-element */
-"use client";
-
 import Link from "next/link";
+import Image from "next/image";
+import { formatTaka } from "@/lib/site";
+import { dict, type Lang } from "@/lib/i18n";
+import type { ProductMapInterface } from "@/routes/product";
 
-interface CardItem {
-  index: number;
-  item: {
-    id: number;
-    slug: string;
-    image: string;
-    name: string;
-    description: string;
-    brand: string;
-    series: string;
-  };
-}
+/**
+ * The old card rotated the product image -6deg and rendered the name in one
+ * of three colours chosen by array index, which made the name hard to read
+ * and meant nothing. It also never showed the price — `price` was not even
+ * in the component's props interface — on cards whose titles literally end
+ * "...price in Bangladesh".
+ */
+export default function ProductCard({
+  item,
+  lang,
+}: {
+  item: ProductMapInterface;
+  lang: Lang;
+}) {
+  const d = dict(lang);
+  const href = `${lang === "en" ? "/en" : ""}/hearing-aids/${item.slug}`;
+  const image =
+    item.image && item.image.length > 50
+      ? item.image
+      : "/assets/Images/Common/senso_404_not_found.png";
 
-export default function Card({ item, index }: CardItem) {
+  // Product names in the CMS carry the SEO phrase, e.g. "Resound key 461 DRW
+  // RIE hearing aid price in Bangladesh". Trim it for display; the full
+  // string stays in the alt text and on the detail page.
+  const display = item.name
+    .replace(/\s*hearing aid price in bangladesh\s*$/i, "")
+    .trim();
+
   return (
-    <div className="flex flex-col items-center bg-white h-[260px] lg:h-[480px] 2xl:h-[560px] rounded-md relative">
-      <div className="absolute bg-gray-400/40 top-1/4 left-1/2 transform -translate-x-1/2 -translate-y-1/2 h-1/5 w-4/5 z-10 m-2 items-center">
-        <div className="relative h-full w-full">
-          <div
-            className={`w-2 lg:w-3 h-2 lg:h-3 absolute rounded-full 
-            ${
-              index % 2 === 0
-                ? "bg-yellow-600"
-                : index % 3 === 0
-                ? "bg-green-600"
-                : "bg-red-600"
-            }
-            top-0 left-0 m-1 lg:m-3`}
-          ></div>
-          {/* <div className="w-10 h-6 absolute border-4 border-red-900/50 bg-transparent rounded-lg bottom-0 m-3 animate-spin"></div> */}
-        </div>
-      </div>
-
-      {item.image.length > 50 ? <img
-        className="w-full h-4/6 !w-4/6 object-fill rounded-md z-20 mx-auto lg:mt-10 -rotate-6 hover:rotate-0 ease-in-out duration-300 scale-110 relative"
-        src={item.image}
-        alt={item.name}
-      /> 
-      : 
-      <img
-        className="w-full h-4/6 !w-4/6 object-fill rounded-md z-20 mx-auto lg:mt-10 -rotate-6 hover:rotate-0 ease-in-out duration-300 scale-110 relative"
-          // src={item.image}
-          src="/assets/Images/Common/senso_404_not_found.png"
+    <Link
+      href={href}
+      className="group flex h-full flex-col overflow-hidden rounded-xl border border-line bg-paper-surface transition-colors hover:border-brand"
+    >
+      <div className="relative aspect-[4/3] w-full bg-paper-2">
+        <Image
+          src={image}
           alt={item.name}
+          fill
+          sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 280px"
+          className="object-contain p-4"
         />
-      }
-
-
-      <div className="!mt-4 mb-2 lg:mt-5 flex flex-col space-y-2 items-center px-1 lg:px-10 h-full text-center">
-        <h3
-          className={`font-bold capitalize
-          ${
-            index % 2 === 0
-              ? "text-yellow-700"
-              : index % 3 === 0
-              ? "text-green-700"
-              : "text-[#CA0508]"
-          }
-          text-[8px] lg:text-base`}
-        >
-          {item.name}
-        </h3>
-        <p className="text-[7px] md:text-xs font-normal hidden md:block">
-          {item.description.split(" ").slice(0, 40).join(" ")}
-          {item.description.split(" ").length > 40 && "..."}
-        </p>
-
-        <p className="text-[7px] md:text-xs font-normal block md:hidden">
-          {item.description.split(" ").slice(0, 20).join(" ")}
-          {item.description.split(" ").length > 20 && "..."}
-        </p>
-        <div className="flex flex-row justify-between text-[7px] lg:text-sm w-full mt-10">
-          <h5>
-            <span className="text-stone-800 font-medium">Brand: </span>
-            <span
-              className={`font-bold ${
-                index % 2 === 0
-                  ? "text-yellow-700"
-                  : index % 3 === 0
-                  ? "text-green-700"
-                  : "text-[#CA0508]"
-              }`}
-            >
-              {item.brand}
-            </span>
-          </h5>
-          <h5>
-            <span className="text-stone-800 font-medium">Series: </span>
-            <span
-              className={`font-bold ${
-                index % 2 === 0
-                  ? "text-yellow-700"
-                  : index % 3 === 0
-                  ? "text-green-700"
-                  : "text-[#CA0508]"
-              }`}
-            >
-              {item.series}
-            </span>
-          </h5>
-        </div>
       </div>
-      <Link
-        href={`/hearing-aids/${item.slug}`}
-        type="button"
-        className={`w-full py-2 lg:py-4 
-        ${
-          index % 2 === 0
-            ? "bg-yellow-700"
-            : index % 3 === 0
-            ? "bg-green-700"
-            : "bg-red-700"
-        } 
-        ${
-          index % 2 === 0
-            ? "hover:bg-yellow-600"
-            : index % 3 === 0
-            ? "hover:bg-green-600"
-            : "hover:bg-red-600"
-        } 
-        text-white capitalize text-xs lg:text-base text-center`}
-      >
-        Show More
-      </Link>
-    </div>
+
+      <div className="flex flex-1 flex-col gap-1 p-4">
+        <p className="font-display text-lg font-semibold leading-snug text-ink">
+          {display}
+        </p>
+        <p className="text-[15px] text-ink-muted">
+          {item.series}
+        </p>
+        <p className="num mt-auto pt-3 font-display text-2xl font-bold text-brand">
+          {formatTaka(item.price)}
+        </p>
+        <span className="font-display text-[15px] font-semibold text-ink-2 group-hover:text-brand">
+          {d.products.details} →
+        </span>
+      </div>
+    </Link>
   );
 }
