@@ -1,5 +1,6 @@
 "use client";
 
+
 import { SeriesInterface } from "@/routes/product";
 import { useDispatch } from "react-redux";
 import { productSearchSlice } from "@/redux/features/productSearch.slice";
