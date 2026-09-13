@@ -1,50 +1,52 @@
-"use server";
+import type { Metadata } from "next";
+import ProductView from "@/components/views/ProductView";
+import { getProduct, getProducts } from "@/routes/product";
+import { formatTaka, altLanguages } from "@/lib/site";
 
-import Index from "@/components/HearingAids/slug/Index";
-import { getProduct } from "@/routes/product";
+export const revalidate = 3600;
 
-type Props = {
-  params: { slug: string };
-};
+type Props = { params: { slug: string } };
 
-export async function generateMetadata({ params }: Props) {
-  const productData = getProduct(params.slug);
-  const product = await Promise.resolve(productData);
+export async function generateStaticParams() {
+  const products = await getProducts();
+  return products.map((p) => ({ slug: p.slug }));
+}
 
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const res = await getProduct(params.slug);
+  const product = res?.data;
+  if (!product) return { title: "Not found" };
+
+  const display = product.name
+    .replace(/\s*hearing aid price in bangladesh\s*$/i, "")
+    .trim();
+
+  // The old version built `keywords` by concatenating
+  // description.split(" ") + description.split(".") + description, which
+  // produced one enormous comma-joined string. Google has ignored the
+  // keywords tag since 2009; the description is what matters.
   return {
-    title: product.data.name,
-    description: product.data.description,
-    keywords:
-      product.data.description.split(" ") +
-      product.data.description.split(".") +
-      product.data.description,
+    title: `${display} — ${formatTaka(product.price)}`,
+    description:
+      product.description?.slice(0, 300) ||
+      `${display}. ReSound কানের মেশিন, দাম ${formatTaka(product.price)}। সেনসো হিয়ারিং সেন্টার, পান্থপথ, ঢাকা।`,
+    alternates: {
+      canonical: `/hearing-aids/${params.slug}`,
+      languages: altLanguages(
+        `/hearing-aids/${params.slug}`,
+        `/en/hearing-aids/${params.slug}`
+      ),
+    },
     openGraph: {
-      title: product.data.name,
-      description: product.data.description,
-      url: "https://sensohearingdhaka.com/hearing-aids/" + params.slug,
-      siteName:
-        "Senso Hearing Centre || Best Hearing centre in Dhaka, Bangladesh",
-      images: [
-        {
-          url: product.data.avatar,
-          width: 800,
-          height: 600,
-          alt: "Senso hearing centre is the best hearing centre in Bangladesh. Senso Hearing Centre, Dhaka is one of the largest and reputed Hearing centre in Bangladesh. We pride our self at this side for 15 years. We assure your best hearing healthcare. We offer good price range of hearing aids in Bangladesh.",
-        },
-      ],
-      locale: "en_US",
       type: "website",
+      title: display,
+      description: product.description?.slice(0, 300),
+      images: product.avatar ? [{ url: product.avatar }] : undefined,
     },
   };
 }
 
-export default async function HearingAids({ params }: Props) {
-  const productData = getProduct(params.slug);
-  const product = await Promise.resolve(productData);
-
-  return (
-    <div>
-      <Index product={product.data} />
-    </div>
-  );
+export default async function Page({ params }: Props) {
+  const res = await getProduct(params.slug);
+  return <ProductView product={res?.data ?? null} lang="bn" slug={params.slug} />;
 }

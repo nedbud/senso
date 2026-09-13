@@ -1,80 +1,34 @@
-/* eslint-disable @next/next/no-img-element */
-"use client";
+import { dict, type Lang } from "@/lib/i18n";
+import type { ProductMapInterface } from "@/routes/product";
+import ProductCard from "@/components/Home/Card__bestProducts";
 
-import React from "react";
-import Link from "next/link";
-import { ProductMapInterface } from "@/routes/product";
-import { useState, useEffect } from "react";
-import { useAppSelector } from "@/redux/hook";
+/**
+ * Server component.
+ *
+ * This was `"use client"` with a useEffect fetch, so /hearing-aids shipped an
+ * empty grid in its HTML and the products only appeared after JavaScript ran.
+ * The category page that should rank for "hearing aid price in bangladesh"
+ * had no products and no prices in its source. Product detail pages were
+ * already server-rendered; only the list was not.
+ */
+export default function ProductList({
+  products,
+  lang,
+}: {
+  products: ProductMapInterface[];
+  lang: Lang;
+}) {
+  const d = dict(lang);
 
-const ProductList = () => {
-  let [products, setProducts] = useState([]);
-
-  const series: string | number = useAppSelector(
-    (state) => state.productSearchSlice.series
-  );
-
-  const best: boolean = useAppSelector(
-    (state) => state.productSearchSlice.best
-  );
-
-  const trending: boolean = useAppSelector(
-    (state) => state.productSearchSlice.trending
-  );
-
-  const latest: boolean = useAppSelector(
-    (state) => state.productSearchSlice.latest
-  );
-
-  const formatPrice = (price: number): string => {
-    return price.toLocaleString('en-US');
-  };
-
-  const sort: string = useAppSelector((state) => state.productSearchSlice.sort);
-
-  useEffect(() => {
-    fetch(
-      `${process.env.NEXT_PUBLIC_BASE_URL}/api/senso/products/series?series=${series}&best=${best}&leatest=${latest}&trending=${trending}&sort=${sort}`
-    )
-      .then((response) => response.json())
-      .then((products) => setProducts(products.data));
-  }, [series, latest, best, trending, sort]);
+  if (!products.length) {
+    return <p className="py-10 text-ink-muted">{d.products.empty}</p>;
+  }
 
   return (
-    <div>
-      <div className="grid grid-cols-12 gap-4">
-        {products &&
-          products.map((item: ProductMapInterface, index: number) => (
-            <Link
-              href={"/hearing-aids/" + item.slug}
-              key={index}
-              className="hover:cursor-pointer col-span-12 md:col-span-6 lg:col-span-4 border bg-gray-50 hover:border-red-600 rounded-md shadow-sm p-2"
-            >
-              {item.image.length > 50 ? <img
-                className="h-[230px] lg:h-[180px] w-[500px] rounded-md object-cover"
-                src={item.image}
-                alt={item.name}
-              /> 
-              : 
-              <img
-                className="h-[230px] lg:h-[180px] w-[500px] rounded-md object-cover"
-                  // src={item.image}
-                  src="/assets/Images/Common/senso_404_not_found.png"
-                  alt={item.name}
-                />
-              }
-
-              <p className="text-[#CA0508] text-base pt-2 font-semibold">
-                {item.name}
-              </p>
-              {/* <p>{item.price.split(".")[0]} BDT</p> */}
-              <p className="mt-1 text-base text-primary font-bold">{formatPrice(parseFloat(item.price))} BDT</p>
-      
-            </Link>
-          ))}
-      </div>
+    <div className="grid grid-cols-2 gap-4 md:grid-cols-3">
+      {products.map((item) => (
+        <ProductCard key={item.slug} item={item} lang={lang} />
+      ))}
     </div>
   );
-};
-
-export default ProductList;
+}

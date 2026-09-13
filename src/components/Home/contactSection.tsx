@@ -1,200 +1,198 @@
-/* eslint-disable @next/next/no-img-element */
 "use client";
 
-import React, { useRef } from "react";
+import { useRef, useState } from "react";
 import emailjs from "@emailjs/browser";
 import { toast } from "react-toastify";
+import { SITE, telLink, whatsappLink } from "@/lib/site";
+import { dict, type Lang } from "@/lib/i18n";
+import { PhoneIcon, WhatsAppIcon } from "@/components/ui/Icons";
 
-import "react-toastify/dist/ReactToastify.css";
+/**
+ * Text and voice get equal weight, and the form is the third option rather
+ * than the first. Almost everyone who contacts this business does it by
+ * message, and asking someone with hearing loss to phone you as the price of
+ * admission is the wrong default for a hearing clinic.
+ *
+ * The form keeps four fields. Stripping forms to name+email is folklore; the
+ * "best time to call" field is friction that buys reassurance, because it
+ * tells the person a human will ring at a moment they control.
+ */
+export default function Contact({ lang }: { lang: Lang }) {
+  const d = dict(lang);
+  const bn = lang === "bn";
+  const form = useRef<HTMLFormElement>(null);
+  const [sending, setSending] = useState(false);
 
-const items = [
-  { id: 1, icon: "/assets/Icons/smartphone.svg", name: "02-48114837, +8801322-926207, +8801731-008075" },
-  {
-    id: 2,
-    icon: "/assets/Icons/envelope.svg",
-    name: "info@sensohearingdhaka.com",
-    alt: "Senso-Envelop-Icon",
-  },
-  {
-    id: 3,
-    icon: "/assets/Icons/home.svg",
-    name: "57/9, Artisan Center (4th floor), Panthapath, Dhaka-1205",
-    alt: "Senso-Address-Icon",
-  },
-];
+  const serviceId = process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID || "";
+  const templateId = process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID || "";
+  const accountId = process.env.NEXT_PUBLIC_EMAILJS_ACCOUNT_ID || "";
 
-export default function Contact() {
-  const form = useRef<any>(null);
-
-  const service_id: string = process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID || "";
-  const template_id: string = process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID || "";
-  const account_id: string = process.env.NEXT_PUBLIC_EMAILJS_ACCOUNT_ID || "";
-
-  const handleSubmit = (e: any) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
-    const name = form.current.querySelector('input[name="name"]');
-    const phone = form.current.querySelector('input[name="phone"]');
-    const email = form.current.querySelector('input[name="email"]');
-    const message = form.current.querySelector('textarea[name="message"]');
-
-    emailjs.sendForm(service_id, template_id, form?.current, account_id).then(
-      (result) => {
-        if (result.text === "OK") {
-          toast.success(
-            "Your request is successfully saved. Please wait for our confirmation"
-          );
-        } else {
-          toast.error("We could not find your request. Please try again later");
-        }
-      },
-      (error) => {
-        console.log(error.text);
+    if (!form.current || sending) return;
+    setSending(true);
+    try {
+      const result = await emailjs.sendForm(
+        serviceId,
+        templateId,
+        form.current,
+        accountId
+      );
+      if (result.text === "OK") {
+        toast.success(
+          bn
+            ? "পেয়েছি। আমরা শীঘ্রই ফোন করব।"
+            : "Got it. We will call you shortly."
+        );
+        form.current.reset();
+      } else {
+        throw new Error(result.text);
       }
-    );
+    } catch {
+      toast.error(
+        bn
+          ? "পাঠানো গেল না। সরাসরি হোয়াটসঅ্যাপে লিখুন বা ফোন করুন।"
+          : "That did not send. Please message us on WhatsApp or call instead."
+      );
+    } finally {
+      setSending(false);
+    }
   };
+
+  const label = "block font-display font-semibold text-ink mb-1.5";
+  const input =
+    "w-full min-h-[52px] rounded-lg border-[1.5px] border-line-strong bg-paper-surface px-4 text-[17px] text-ink focus:border-ink-2 focus:outline-none";
+
   return (
-    <div id="contact" className="bg-gray-100 pb-32 lg:pt-20 lg:pb-40">
-      {/* contact form  */}
-      <div className="overflow-hidden">
-        <div className="max-w-6xl mx-auto min-h-[682px] relative">
-          <div className="relative z-[5] grid gap-5 grid-cols-1 md:grid-cols-2 rounded-lg bg-white text-center shadow">
-            <div className="flex flex-col p-4 lg:px-10 lg:pt-10 lg:pb-20">
-              <div className="flex items-center">
-                <div className="bg-red-700 w-14 h-[3px]"></div>
-                <span className="text-theme_blue mx-2 lg:mx-5 text-md lg:text-lg">
-                  Say hi,
-                </span>
-                <img
-                  src="/assets/Icons/Contact/waving.svg"
-                  alt="Senso-Waving-Icon"
-                  className="w-5 lg:w-10 animate-bounce"
-                />
-              </div>
-              <div className="text-start text-xl md:text-5xl font-semibold leading-snug md:leading-none my-2 lg:my-10">
-                <p>
-                  Let’s <span className="text-red-700">talk</span> about your
-                  <span className="text-red-700"> Problem!</span>
-                </p>
-              </div>
-              <div className="text-start text-sm lg:text-xl">
-                <p className="text-[#8f8f8f]">
-                  We’d love to connect with you to talk about your Problems and
-                  possible circumstance!
-                </p>
-              </div>
+    <section id="contact" className="mx-auto max-w-3xl px-4 py-12 lg:px-8">
+      <h2 className="mb-3 text-[clamp(24px,4.6vw,31px)] text-ink">
+        {bn ? "যোগাযোগ করুন" : "Get in touch"}
+      </h2>
+      <p className="mb-6 max-w-prose text-xl text-ink-2">
+        {bn
+          ? "যেভাবে আপনার সুবিধা — লিখে, ফোনে, অথবা সরাসরি চলে এসে।"
+          : "However suits you — message, call, or simply walk in."}
+      </p>
 
-              <ul role="list" className="mt-5 lg:mt-7	text-base lg:text-xl">
-                {items.map((item) => (
-                  <li key={item.id} className="flex py-2 lg:py-4 items-start">
-                    <img
-                      src={item.icon}
-                      alt={item.alt}
-                      className="mr-5 lg:mr-10 w-5 lg:w-7"
-                    />
-                    <p className="text-start text-sm lg:text-base">
-                      {item.name}
-                    </p>
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            {/* contact form  */}
-            <div className="lg:py-10 px-6 sm:px-10 xl:p-12">
-              <form ref={form} onSubmit={handleSubmit} className="lg:mt-6">
-                <div className="lg:my-8">
-                  <div className="lg:mt-1 relative">
-                    <input
-                      type="text"
-                      name="name"
-                      id="first-name"
-                      placeholder="Name"
-                      autoComplete="given-name"
-                      className="block w-full rounded-md border-warm-gray-300 py-3 px-4 text-warm-gray-900 shadow-sm bg-[#F6F6F6]"
-                    />
-                    <img
-                      className="absolute top-3 right-3"
-                      src="/assets/Icons/Contact/user.svg"
-                      alt="Senso-User-Icon"
-                    />
-                  </div>
-                </div>
-
-                <div className="my-8">
-                  <div className="mt-1 relative">
-                    <input
-                      id="email"
-                      placeholder="Email"
-                      type="email"
-                      name="email"
-                      autoComplete="email"
-                      className="block w-full rounded-md border-warm-gray-300 py-3 px-4 text-warm-gray-900 shadow-sm bg-[#F6F6F6]"
-                    />
-                    <img
-                      className="absolute top-3 right-3"
-                      src="/assets/Icons/Contact/mail.svg"
-                      alt="Senso-Contact-Icon"
-                    />
-                  </div>
-                </div>
-
-                <div className="my-8">
-                  <div className="mt-1 relative">
-                    <input
-                      type="text"
-                      placeholder="Phone"
-                      name="phone"
-                      id="phone"
-                      autoComplete="tel"
-                      className="block w-full rounded-md border-warm-gray-300 py-3 px-4 text-warm-gray-900 shadow-sm bg-[#F6F6F6]"
-                      aria-describedby="phone-optional"
-                    />
-
-                    <img
-                      className="absolute top-3 right-3"
-                      src="/assets/Icons/Contact/phone.svg"
-                      alt="Senso-Phone-Icon"
-                    />
-                  </div>
-                </div>
-
-                <div className="my-8">
-                  <div className="mt-1 relative">
-                    <textarea
-                      id="message"
-                      placeholder="Tell us what you want to know"
-                      name="message"
-                      rows={4}
-                      className="block w-full rounded-md border-warm-gray-300 py-3 px-4 text-warm-gray-900 shadow-sm bg-[#F6F6F6]"
-                      aria-describedby="message-max"
-                      defaultValue={""}
-                    />
-
-                    <img
-                      className="absolute top-3 right-3"
-                      src="/assets/Icons/Contact/speech.svg"
-                      alt="Senso-Speech-Icon"
-                    />
-                  </div>
-                </div>
-
-                <div className="sm:col-span-2 sm:flex sm:justify-start ">
-                  <button
-                    type="submit"
-                    className="inline-flex mb-4 lg:mb-0 items-center px-6 py-2 border border-transparent text-lg font-medium rounded-full shadow-sm text-white bg-red-700 hover:bg-red-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
-                  >
-                    Submit
-                  </button>
-                </div>
-              </form>
-            </div>
-          </div>
-          <div className="bg-[#CA0505] absolute rounded-[31px] h-[621px] bottom-5 left-32 w-[91%] z-[3]"></div>
-
-          <div className="bg-red-800 absolute rounded-[31px] h-[621px] bottom-1 left-[200px] w-[84%] z-[2]"></div>
-        </div>
+      <div className="mb-8 grid gap-2.5 sm:grid-cols-2">
+        <a
+          href={whatsappLink(d.wa.appointment)}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex min-h-[52px] items-center justify-center gap-2 rounded-lg border-[1.5px] border-brand bg-brand px-5 font-display text-lg font-semibold text-white hover:bg-brand-deep"
+        >
+          <WhatsAppIcon className="h-5 w-5" />
+          {d.hero.ctaWhatsapp}
+        </a>
+        <a
+          href={telLink()}
+          className="inline-flex min-h-[52px] items-center justify-center gap-2 rounded-lg border-[1.5px] border-line-strong bg-paper-surface px-5 font-display text-lg font-semibold text-ink hover:border-ink-2"
+        >
+          <PhoneIcon className="h-[19px] w-[19px]" />
+          <span className="num">{SITE.phoneDisplay}</span>
+        </a>
       </div>
-    </div>
+
+      <div className="rounded-xl border border-line bg-paper-surface p-5">
+        <h3 className="mb-1 font-display text-xl font-semibold text-ink">
+          {bn ? "অথবা নম্বর রেখে যান, আমরা ফোন করব" : "Or leave your number and we will call you"}
+        </h3>
+        <p className="mb-5 text-[17px] text-ink-2">
+          {bn
+            ? "কোন সময়ে ফোন করলে আপনার সুবিধা হবে সেটাও লিখে দিন।"
+            : "Tell us when it suits you to be called."}
+        </p>
+
+        <form ref={form} onSubmit={handleSubmit} className="flex flex-col gap-4">
+          <div>
+            <label className={label} htmlFor="name">
+              {bn ? "নাম" : "Name"}
+            </label>
+            <input id="name" name="name" type="text" required className={input} />
+          </div>
+
+          <div>
+            <label className={label} htmlFor="phone">
+              {bn ? "ফোন নম্বর" : "Phone number"}
+            </label>
+            <input
+              id="phone"
+              name="phone"
+              type="tel"
+              inputMode="tel"
+              required
+              className={`${input} num`}
+              placeholder="01XXXXXXXXX"
+            />
+          </div>
+
+          <div>
+            <label className={label} htmlFor="besttime">
+              {bn ? "কখন ফোন করলে সুবিধা" : "Best time to call"}
+            </label>
+            <input
+              id="besttime"
+              name="besttime"
+              type="text"
+              className={input}
+              placeholder={bn ? "যেমন: বিকেল ৪টার পর" : "e.g. after 4 PM"}
+            />
+          </div>
+
+          <div>
+            <label className={label} htmlFor="message">
+              {bn ? "কানের সমস্যাটা কী?" : "What is happening with your hearing?"}
+            </label>
+            <textarea
+              id="message"
+              name="message"
+              rows={4}
+              className={`${input} py-3`}
+            />
+          </div>
+
+          {/* emailjs template still expects an email field */}
+          <input type="hidden" name="email" value={SITE.email} readOnly />
+
+          <button
+            type="submit"
+            disabled={sending}
+            className="inline-flex min-h-[52px] items-center justify-center rounded-lg border-[1.5px] border-brand bg-brand px-5 font-display text-lg font-semibold text-white hover:bg-brand-deep disabled:opacity-60"
+          >
+            {sending
+              ? bn
+                ? "পাঠানো হচ্ছে…"
+                : "Sending…"
+              : bn
+              ? "ফোন করার অনুরোধ পাঠান"
+              : "Ask us to call you"}
+          </button>
+        </form>
+      </div>
+
+      <div className="mt-8 flex flex-col gap-2 text-[17px] text-ink-2">
+        <p className="font-display font-semibold text-ink">
+          {bn ? "কোথায় আসবেন" : "Where to find us"}
+        </p>
+        <p>
+          {bn ? SITE.address.lineBn : SITE.address.line},{" "}
+          {bn
+            ? `${SITE.address.cityBn}-${SITE.address.postcode}`
+            : `${SITE.address.city}-${SITE.address.postcode}`}
+          <br />
+          <span className="text-ink-muted">
+            {bn ? SITE.address.landmarkBn : SITE.address.landmark}
+          </span>
+        </p>
+        <a
+          href={SITE.address.mapsUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="font-display font-semibold text-brand underline"
+        >
+          {d.common.map}
+        </a>
+      </div>
+    </section>
   );
 }

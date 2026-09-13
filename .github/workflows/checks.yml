@@ -1,0 +1,49 @@
+# Runs before anything is allowed to merge. It is the only thing standing
+# between a type error and production.
+#
+# Deliberately NOT triggered by pushes to main. Main is only reached by merging
+# a pull request, and this already ran on that pull request — running it again
+# on the merge commit tests the same tree twice, tells you nothing new, and
+# races the deploy it has no power to stop.
+#
+# What makes these checks binding is branch protection on main: "require status
+# checks to pass before merging", with `build` selected.
+
+name: checks
+
+on:
+  pull_request:
+  push:
+    branches: [dev]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "18"
+          cache: yarn
+
+      - run: yarn install --frozen-lockfile
+
+      - name: Types
+        run: npx tsc --noEmit
+
+      - name: Lint
+        run: yarn lint
+
+      # A full build catches what tsc cannot: a page that throws while being
+      # rendered, a missing module, a server component importing something it
+      # may not. It also proves the CMS is answering, because the product pages
+      # are generated from it.
+      #
+      # The private keys are deliberately absent. The build must not need them,
+      # and if it ever starts to, that is the thing to fix.
+      - name: Build
+        run: yarn build
+        env:
+          NEXT_PUBLIC_BASE_URL: https://cms.sensohearingdhaka.com

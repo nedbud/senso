@@ -1,0 +1,14 @@
+# Everything here either does not belong in an image or would invalidate the
+# build cache on every commit for no reason.
+.git
+.github
+node_modules
+.next
+.env
+.env.*
+!.env.example
+npm-debug.log*
+yarn-error.log*
+.DS_Store
+docs
+scripts

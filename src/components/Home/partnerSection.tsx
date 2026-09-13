@@ -1,44 +1,82 @@
-/* eslint-disable @next/next/no-img-element */
-import React from "react";
+import Image from "next/image";
+import { SITE } from "@/lib/site";
+import { dict, type Lang } from "@/lib/i18n";
 
-const partners = [
-  {
-    imgSource: "/assets/Images/Partner/p1.png",
-  },
-];
+/**
+ * Senso answered "authorised dealer" on the information form, not the
+ * "exclusive distributor" their Messenger replies have sometimes claimed.
+ * The accurate word is used, because the thing that actually carries weight
+ * here is that it can be checked on ReSound's own site — which is exactly
+ * what the competitors claiming brand partnerships cannot offer.
+ */
+export default function Partners({ lang }: { lang: Lang }) {
+  const d = dict(lang);
+  const bn = lang === "bn";
 
-export default function Partners() {
   return (
-    <div className="bg-gray-50 mx-auto px-4 sm:px-6 lg:px-8 py-10">
-      <div className="py-6 px-4 lg:pt-20 lg:px-48">
-        <h1 className="text-[20px] text-center text-gray-900 font-semibold lg:text-[40px] lg:font-semibold">
-          We are an authorized partner of the world’s leading hearing aid
-          brands.
-        </h1>
-        <p className="text-center text-[#CA0508] font-medium text-medium lg:text-xl pt-4 ">
-          Feel the difference! Take a free trial today
+    <section className="bg-paper-2 py-12">
+      <div className="mx-auto flex max-w-3xl flex-col gap-4 px-4 lg:px-8">
+        <h2 className="text-[clamp(24px,4.6vw,31px)] text-ink">
+          {bn ? "ReSound-এর অনুমোদিত ডিলার" : "An authorised ReSound dealer"}
+        </h2>
+
+        <p className="max-w-prose text-xl text-ink-2">
+          {bn ? (
+            <>
+              আমরা ডেনমার্কের ReSound (GN)-এর অনুমোদিত ডিলার। ReSound তাদের
+              নিজেদের ওয়েবসাইটে বাংলাদেশের তালিকায়{" "}
+              <strong className="text-ink">{SITE.dealer.entity}</strong> রেখেছে —
+              আমাদের কথা আমাদের কাছ থেকে না শুনে ওখানেই যাচাই করে নিন।
+            </>
+          ) : (
+            <>
+              We are an authorised dealer for ReSound (GN, Denmark). ReSound
+              lists{" "}
+              <strong className="text-ink">{SITE.dealer.entity}</strong> for
+              Bangladesh on their own website — check it there rather than
+              taking our word for it.
+            </>
+          )}
         </p>
+
+        <ul className="flex flex-col gap-1.5 text-[17px] text-ink-2">
+          <li>
+            {bn
+              ? `ট্রেড লাইসেন্স: ${SITE.tradeLicence}`
+              : `Trade licence: ${SITE.tradeLicence}`}
+          </li>
+          <li>
+            {bn
+              ? `যেসব হাসপাতালের সাথে কাজ: ${SITE.hospitals.join(", ")}`
+              : `We work with: ${SITE.hospitals.join(", ")}`}
+          </li>
+          <li>
+            {bn
+              ? "আমরা শুধু ReSound-এর ডিলার — অন্য ব্র্যান্ড বিক্রি বা সার্ভিস করি না।"
+              : "We deal in ReSound only — we do not sell or service other brands."}
+          </li>
+        </ul>
+
+        <div className="flex flex-wrap items-center gap-6 pt-1">
+          <div className="rounded-lg border border-line bg-paper-surface p-4">
+            <Image
+              src="/assets/Images/Partner/p1.png"
+              alt="ReSound GN"
+              width={200}
+              height={80}
+              className="h-12 w-auto object-contain"
+            />
+          </div>
+          <a
+            href={SITE.dealer.proofUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="font-display font-semibold text-brand underline"
+          >
+            {d.common.verify}
+          </a>
+        </div>
       </div>
-      <div className="flex flex-row justify-center mt-2 lg:mt-10">
-        {partners &&
-          partners.map((partner, index) => (
-            <a
-              title="index"
-              key={index}
-              href="#"
-              className="px-8 py-2 lg:w-1/4 h-[60px] lg:h-[120px] border rounded-md hover:border-red-700"
-            >
-              <img
-                className="h-full w-full"
-                src={partner.imgSource}
-                alt="Resoud Gn Senso Partner"
-                // width={100}
-                // height={100}
-                // priority
-              />
-            </a>
-          ))}
-      </div>
-    </div>
+    </section>
   );
 }

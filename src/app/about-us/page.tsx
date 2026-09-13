@@ -1,98 +1,25 @@
+import type { Metadata } from "next";
+import { getCompanyAbout } from "@/routes/company";
 import Hero from "@/components/About/heroSection";
 import History from "@/components/About/historySection";
 import Mission from "@/components/About/missionSection";
-import { getCompanyAbout } from "@/routes/company";
-import { Metadata } from "next";
+
+export const revalidate = 86400;
 
 export const metadata: Metadata = {
-  title: "About Us",
+  title: "আমরা কারা — সেনসো হিয়ারিং সেন্টার",
   description:
-    "Senso hearing centre is the best hearing centre in Bangladesh. Senso Hearing Centre, Dhaka is one of the largest and reputed Hearing centre in Bangladesh. We pride our self at this side for 15 years. We assure your best hearing healthcare. We are authorized partner of the world’s leading hearing aid brands Resound. All the Resound Hearing aid we provide. We offer best hearing aid price in Bangladesh.",
-  keywords: [
-    "resound hearing aid",
-    "resound hearing aid price",
-    "hearing",
-    "aids aid",
-    "aids hearing",
-    "hearing aid",
-    "hearing aids",
-    "hearing aid in bangladesh",
-    "hearing aid in bd",
-    "hearing aid price in bangladesh",
-    "hearing aid price in bd",
-    "hearing aid price",
-    "hearing care in dhaka",
-    "hearing centre in near me",
-    "medical equipment price",
-    "medical equipment price in bangladesh",
-    "which hearing aids",
-    "about hearing aids",
-    "aids for hearing",
-    "where to get hearing aids what is hearing aids",
-    "what is a hearing aids hearing aids hearing aids",
-    "for hearing aids",
-    "hearing aids",
-    "what are hearing aids",
-    "which hearing aid",
-    "the hearing aid",
-    "what is hearing aid",
-    "hearing aid in",
-    "hearing aid",
-    "what is an hearing aid",
-    "what is a hearing aid",
-    "a hearing aid",
-    "compare prices",
-    "hearing loss",
-    "hearing impaired",
-    "hearing devices",
-    "hearingaids",
-    "hearing aid devices hearingaid",
-    "resound",
-    "hearing device",
-    "resound",
-    "hearing aid device",
-    "test hearing",
-    "where can i get a hearing test how to test hearing",
-  ],
-  verification: {
-    google: "D7V9ovCzKzcomUagIaPLjeDIrdnGWmw01YTBshq8gYY",
-  },
-  openGraph: {
-    title: "About us || Senso Hearing Centre",
-    description:
-      "Senso hearing centre is the best hearing centre in Bangladesh. Senso Hearing Centre, Dhaka is one of the largest and reputed Hearing centre in Bangladesh. We pride our self at this side for 15 years. We assure your best hearing healthcare. We offer good price range of hearing aids in Bangladesh.",
-    url: "https://sensohearingdhaka.com/hearing-aids",
-    siteName:
-      "Senso Hearing Centre || Best Hearing centre in Dhaka, Bangladesh",
-    images: [
-      {
-        url: "https://sensohearingdhaka.com/assets/Images/temp/Business_Excellence_award_2019.jpeg",
-        width: 1800,
-        height: 1600,
-        alt: "senso hearing centre is the best hearing centre in Bangladesh. Getting Business Excellence award in 2019",
-      },
-    ],
-    locale: "en_US",
-    type: "website",
-  },
-  icons: {
-    icon: "./favicon.ico",
-    shortcut: "./favicon.ico",
-    apple: "./favicon.ico",
-  },
-  manifest: "./manifest.webmanifest",
-  category: "Hearing Aids Shop",
+    "সেনসো হিয়ারিং সেন্টার, পান্থপথ, ঢাকা। ডেনমার্কের ReSound (GN)-এর বাংলাদেশ পরিবেশক — Tabassum International C/O Senso Hearing Centre.",
+  alternates: { canonical: "/about-us" },
 };
 
-export default async function About() {
-  const companyAboutData = getCompanyAbout();
-  const about = await Promise.resolve(companyAboutData);
-
+export default async function AboutUs() {
+  const about = await getCompanyAbout();
   return (
-    <div>
-      <Hero about={about.data} />
+    <>
+      <Hero about={about} />
       <Mission />
-      {/* <History /> */}
-    </div>
+      <History />
+    </>
   );
 }

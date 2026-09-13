@@ -1,0 +1,29 @@
+# What runs on the server. Nothing is built here — the image comes from the
+# registry, already built by CI. `docker compose pull && up -d` is the whole
+# deployment.
+
+services:
+  app:
+    image: ${SENSO_LANDING_IMAGE:-ghcr.io/nedbud/senso:latest}
+    restart: unless-stopped
+
+    # Server-only values: the Gemini key, the admin server's booking key.
+    # NEXT_PUBLIC_BASE_URL is NOT here — Next bakes it into the JavaScript at
+    # build time, so it is a build argument in the workflow, not a runtime
+    # variable. Setting it here would have no effect and would be read, by the
+    # next person, as if it did.
+    env_file: [.env]
+
+    ports:
+      # Loopback only. The host's nginx terminates TLS and proxies here, as it
+      # does for every other site on this machine.
+      - "127.0.0.1:8093:3000"
+
+    # Next answers on / as soon as it is listening; there is no database to
+    # wait for and no migration to run.
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1:3000/", "||", "exit", "1"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 20s
