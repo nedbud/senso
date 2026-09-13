@@ -7,7 +7,7 @@ export const revalidate = 3600;
 export const metadata: Metadata = {
   title: "Hearing aid prices and hearing tests — Senso Hearing Centre, Panthapath",
   description:
-    "Panthapath, Dhaka. Authorised ReSound distributor for Bangladesh. Prices published openly; hearing test report in 35 minutes.",
+    "Panthapath, Dhaka. Authorised ReSound dealer. Prices published openly; hearing test report in 35 minutes.",
   alternates: {
     canonical: "/en",
     languages: altLanguages("/", "/en"),

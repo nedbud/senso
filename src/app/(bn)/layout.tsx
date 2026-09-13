@@ -14,7 +14,7 @@ export const metadata: Metadata = {
     template: "%s | Senso Hearing Centre",
   },
   description:
-    "পান্থপথ, ঢাকা। ReSound-এর বাংলাদেশ পরিবেশক। কানের মেশিনের দাম খোলাখুলি লেখা, কান পরীক্ষার রিপোর্ট ৩৫ মিনিটে।",
+    "পান্থপথ, ঢাকা। ReSound-এর অনুমোদিত ডিলার। কানের মেশিনের দাম খোলাখুলি লেখা, কান পরীক্ষার রিপোর্ট ৩৫ মিনিটে।",
   // The keywords meta tag was removed. It held ~46 entries including
   // "what is a hearing aids hearing aids hearing aids" and "where to get
   // hearing aids what is hearing aids". Google has ignored this tag since
@@ -32,7 +32,19 @@ export const metadata: Metadata = {
     url: SITE.url,
     title: "কানের মেশিনের দাম ও কান পরীক্ষা — সেনসো হিয়ারিং সেন্টার",
     description:
-      "দাম খোলাখুলি লেখা। কান পরীক্ষায় ৩৫ মিনিট, রিপোর্ট একই দিনে। ReSound-এর বাংলাদেশ পরিবেশক।",
+      "দাম খোলাখুলি লেখা। কান পরীক্ষায় ৩৫ মিনিট, রিপোর্ট একই দিনে। ReSound-এর অনুমোদিত ডিলার।",
+    // There was no image, and twitter.card was already set to
+    // summary_large_image — so a share on WhatsApp, Messenger or Facebook, which
+    // is where most of this site's traffic starts, rendered as a grey box with
+    // a URL under it.
+    images: [
+      {
+        url: "/og.png",
+        width: 1200,
+        height: 630,
+        alt: "Senso Hearing Centre, Panthapath — ২০০৭ সাল থেকে ২০ হাজার রোগীর সেবায়",
+      },
+    ],
   },
   twitter: { card: "summary_large_image" },
   icons: { icon: "/favicon.ico", shortcut: "/favicon.ico", apple: "/favicon.ico" },

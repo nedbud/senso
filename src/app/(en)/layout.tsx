@@ -18,7 +18,7 @@ export const metadata: Metadata = {
     template: "%s | Senso Hearing Centre",
   },
   description:
-    "Panthapath, Dhaka. Authorised ReSound distributor for Bangladesh. Prices published openly; hearing test report the same day, in 35 minutes.",
+    "Panthapath, Dhaka. Authorised ReSound dealer. Prices published openly; hearing test report the same day, in 35 minutes.",
   alternates: {
     canonical: "/en",
     languages: altLanguages("/", "/en"),
@@ -31,8 +31,16 @@ export const metadata: Metadata = {
     url: `${SITE.url}/en`,
     title: "Hearing aid prices and hearing tests — Senso Hearing Centre",
     description:
-      "Prices published openly. A full hearing test takes 35 minutes and the report is yours the same day. Authorised ReSound distributor for Bangladesh.",
-  },
+      "Prices published openly. A full hearing test takes 35 minutes and the report is yours the same day. Authorised ReSound dealer.",
+      images: [
+      {
+        url: "/og.png",
+        width: 1200,
+        height: 630,
+        alt: "Senso Hearing Centre, Panthapath — ২০০৭ সাল থেকে ২০ হাজার রোগীর সেবায়",
+      },
+    ],
+},
   twitter: { card: "summary_large_image" },
   icons: { icon: "/favicon.ico", shortcut: "/favicon.ico", apple: "/favicon.ico" },
   manifest: "/manifest.webmanifest",
