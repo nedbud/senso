@@ -1,5 +1,7 @@
-import { TEST_PACKAGE, formatTaka, getOpenState, toBengaliDigits } from "@/lib/site";
-import { clockLabel, DAY_NAMES, type Lang } from "@/lib/i18n";
+import { formatTaka, getOpenState, toBengaliDigits } from "@/lib/site";
+import { clockLabel, fill, DAY_NAMES, type Lang } from "@/lib/i18n";
+import type { Dict } from "@/routes/dict";
+import type { Clinic } from "@/routes/clinic";
 
 /**
  * The three questions the inbox asks before any other: what a device costs,
@@ -10,13 +12,19 @@ import { clockLabel, DAY_NAMES, type Lang } from "@/lib/i18n";
  */
 export default function FactStrip({
   lang,
+  clinic,
+  d,
   lowPrice,
 }: {
   lang: Lang;
+  clinic: Clinic;
+  d: Dict;
   lowPrice?: number;
 }) {
   const bn = lang === "bn";
-  const state = getOpenState();
+  // The clinic's own hours, not the ones compiled into the site: somebody who
+  // changes the closing time in the panel is changing exactly this line.
+  const state = getOpenState(clinic.hours);
 
   let openValue: string;
   if (state.isOpen && state.closesAt != null) {
@@ -27,32 +35,32 @@ export default function FactStrip({
     ).getDay();
     const label =
       state.nextDay === (today + 1) % 7
-        ? bn ? "আগামীকাল" : "tomorrow"
+        ? d.strip.tomorrow
         : DAY_NAMES[lang][state.nextDay];
     openValue = `${label} ${clockLabel(state.nextOpensAt, lang)}`;
   } else {
-    openValue = bn ? "শনি – বৃহস্পতি" : "Sat – Thu";
+    openValue = d.strip.daysFallback;
   }
 
   const facts = [
     {
-      label: bn ? "মেশিন" : "Devices",
+      label: d.strip.devices,
       value: lowPrice ? formatTaka(lowPrice) : "—",
-      note: bn ? "থেকে" : "from",
+      note: d.strip.devicesNote,
     },
     {
-      label: bn ? "পূর্ণ পরীক্ষা" : "Full test",
-      value: formatTaka(TEST_PACKAGE.fee),
-      note: bn
-        ? `${toBengaliDigits(TEST_PACKAGE.minutes)} মিনিট`
-        : `${TEST_PACKAGE.minutes} min`,
+      label: d.strip.fullTest,
+      value: formatTaka(clinic.testPackage.fee),
+      note: fill(d.tests.minutes, {
+        n: bn
+          ? toBengaliDigits(clinic.testPackage.minutes)
+          : clinic.testPackage.minutes,
+      }),
     },
     {
-      label: state.isOpen
-        ? bn ? "এখন খোলা" : "Open now"
-        : bn ? "এখন বন্ধ" : "Closed",
+      label: state.isOpen ? d.strip.openNow : d.strip.closedNow,
       value: openValue,
-      note: bn ? "পর্যন্ত · শুক্র বন্ধ" : "till · closed Fri",
+      note: d.strip.openNote,
       dot: state.isOpen,
       status: true,
     },

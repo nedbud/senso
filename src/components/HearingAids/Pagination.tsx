@@ -2,6 +2,7 @@ import Link from "next/link";
 import { listHref, type ListState } from "@/lib/listUrl";
 import { toBengaliDigits } from "@/lib/site";
 import type { Lang } from "@/lib/i18n";
+import type { Dict } from "@/routes/dict";
 
 /**
  * Paging, as links.
@@ -17,10 +18,12 @@ import type { Lang } from "@/lib/i18n";
  */
 export default function Pagination({
   lang,
+  d,
   state,
   pages,
 }: {
   lang: Lang;
+  d: Dict;
   state: ListState;
   pages: number;
 }) {
@@ -46,7 +49,7 @@ export default function Pagination({
 
   return (
     <nav
-      aria-label={bn ? "পাতা" : "Pagination"}
+      aria-label={d.pager.label}
       className="mt-10 flex flex-wrap items-center justify-center gap-2"
     >
       {current > 1 ? (
@@ -55,11 +58,11 @@ export default function Pagination({
           rel="prev"
           className={`${box} border-line-strong bg-paper-surface text-ink hover:border-ink-2`}
         >
-          ← <span className={word}>{bn ? "আগের" : "Previous"}</span>
+          ← <span className={word}>{d.pager.previous}</span>
         </Link>
       ) : (
         <span className={`${box} border-line bg-paper text-ink-muted`} aria-hidden="true">
-          ← <span className={word}>{bn ? "আগের" : "Previous"}</span>
+          ← <span className={word}>{d.pager.previous}</span>
         </span>
       )}
 
@@ -94,11 +97,11 @@ export default function Pagination({
           rel="next"
           className={`${box} border-line-strong bg-paper-surface text-ink hover:border-ink-2`}
         >
-          <span className={word}>{bn ? "পরের" : "Next"}</span> →
+          <span className={word}>{d.pager.next}</span> →
         </Link>
       ) : (
         <span className={`${box} border-line bg-paper text-ink-muted`} aria-hidden="true">
-          <span className={word}>{bn ? "পরের" : "Next"}</span> →
+          <span className={word}>{d.pager.next}</span> →
         </span>
       )}
     </nav>

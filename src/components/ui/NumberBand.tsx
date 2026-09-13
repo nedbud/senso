@@ -1,5 +1,8 @@
-import { SITE, TEST_PACKAGE, toBengaliDigits } from "@/lib/site";
+import { toBengaliDigits } from "@/lib/site";
 import type { Lang } from "@/lib/i18n";
+import type { Dict } from "@/routes/dict";
+import type { Clinic } from "@/routes/clinic";
+import type { Test } from "@/routes/details";
 
 /**
  * Bangla numerals at display scale.
@@ -11,35 +14,37 @@ import type { Lang } from "@/lib/i18n";
  * international brands surveyed, uses its own script's numerals as a
  * graphic device; it costs nothing and needs no assets.
  *
- * Every figure here is checkable. None of them is a marketing round number.
+ * Every figure here is checkable, none is a marketing round number, and none
+ * of them is written in this file any more: the warranty and the follow-up
+ * come from the clinic record, the assessment time from the same place the
+ * hero paragraph quotes it, the founding year from the profile. A figure that
+ * changes changes here without anyone touching the site.
  */
-const FOUNDED = 2007;
-
-export default function NumberBand({ lang }: { lang: Lang }) {
+export default function NumberBand({
+  lang,
+  clinic,
+  d,
+  tests,
+}: {
+  lang: Lang;
+  clinic: Clinic;
+  d: Dict;
+  tests: Test[];
+}) {
   const bn = lang === "bn";
   const n = (v: number | string) => (bn ? toBengaliDigits(v) : String(v));
 
+  // The assessment time as the clinic states it; if it has not been filled in,
+  // the tests themselves add up to the same number.
+  const minutes =
+    clinic.testPackage.minutes ||
+    tests.reduce((total, test) => total + (test.minutes ?? 0), 0);
+
   const facts = [
-    {
-      value: n(TEST_PACKAGE.minutes),
-      unit: bn ? "মিনিট" : "min",
-      label: bn ? "পরীক্ষা থেকে রিপোর্ট" : "test to report",
-    },
-    {
-      value: n(SITE.warranty.years),
-      unit: bn ? "বছর" : "years",
-      label: bn ? "ওয়ারেন্টি" : "warranty",
-    },
-    {
-      value: n(SITE.warranty.followUpMonths),
-      unit: bn ? "মাসে" : "months",
-      label: bn ? "পর পর ফলো-আপ" : "between follow-ups",
-    },
-    {
-      value: n(FOUNDED),
-      unit: "",
-      label: bn ? "সাল থেকে পান্থপথে" : "in Panthapath since",
-    },
+    { value: n(minutes), unit: d.band.unitMin, label: d.band.testToReport },
+    { value: n(clinic.warranty.years), unit: d.band.unitYears, label: d.band.warranty },
+    { value: n(clinic.warranty.followUpMonths), unit: d.band.unitMonths, label: d.band.betweenFollowUps },
+    { value: n(clinic.foundedYear), unit: "", label: d.band.since },
   ];
 
   return (

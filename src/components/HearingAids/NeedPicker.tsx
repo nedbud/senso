@@ -8,7 +8,8 @@ import {
 } from "@/lib/catalogue";
 import { listHref, clearNeed, toNeed, type ListState } from "@/lib/listUrl";
 import { toBengaliDigits } from "@/lib/site";
-import type { Lang } from "@/lib/i18n";
+import { lines, type Lang } from "@/lib/i18n";
+import type { Dict } from "@/routes/dict";
 
 /**
  * The way into the catalogue.
@@ -32,22 +33,40 @@ import type { Lang } from "@/lib/i18n";
 
 const LOSS_STEPS: LossLevel[] = ["mild", "moderate", "severe", "profound"];
 
-const BUDGETS = [
-  { max: 50000, bn: "৫০ হাজারের মধ্যে", en: "Under ৳ 50,000" },
-  { max: 120000, bn: "১ লাখ ২০ হাজারের মধ্যে", en: "Under ৳ 120,000" },
-];
+/**
+ * The budget bands, as the CMS stores them: one per line, the figure the
+ * filter uses and then the words to print, split on a pipe.
+ *
+ * Two fields rather than one because the two are not the same thing — "৫০
+ * হাজারের মধ্যে" is what a person reads and 50000 is what the URL filters on,
+ * and a band whose words and number disagree is worse than no band at all.
+ * A line the panel has mangled is skipped rather than guessed at.
+ */
+function budgets(value: string): { max: number; label: string }[] {
+  return lines(value)
+    .map((line) => {
+      const at = line.indexOf("|");
+      if (at === -1) return null;
+      const max = Number(line.slice(0, at).trim());
+      const label = line.slice(at + 1).trim();
+      return Number.isFinite(max) && max > 0 && label ? { max, label } : null;
+    })
+    .filter(Boolean) as { max: number; label: string }[];
+}
 
 export default function NeedPicker({
   lang,
+  d,
   state,
   pool,
 }: {
   lang: Lang;
+  d: Dict;
   state: ListState;
   /** everything the series and sort leave in play, before these answers */
   pool: Device[];
 }) {
-  const bn = lang === "bn";
+  const BUDGETS = budgets(d.picker.budgets);
 
   /**
    * How many devices each option would leave, given the answers already
@@ -88,7 +107,7 @@ export default function NeedPicker({
       <>
         {children}
         <span className={`num text-xs ${on ? "text-white/70" : "text-ink-muted"}`}>
-          {bn ? toBengaliDigits(n) : n}
+          {lang === "bn" ? toBengaliDigits(n) : n}
         </span>
       </>
     );
@@ -126,34 +145,26 @@ export default function NeedPicker({
     <section className="rounded-2xl border border-line bg-paper-surface p-5 sm:p-7">
       <div className="flex flex-wrap items-baseline justify-between gap-3">
         <h2 className="text-2xl text-ink">
-          {bn ? "কোনটা আপনার জন্য?" : "Which one suits you?"}
+          {d.picker.heading}
         </h2>
         {active && (
           <Link
             href={listHref(lang, state, clearNeed(state))}
             className="font-ui text-sm text-brand underline underline-offset-4"
           >
-            {bn ? "সব শর্ত বাদ দিন" : "Clear all"}
+            {d.picker.clear}
           </Link>
         )}
       </div>
 
       <p className="mt-2 max-w-prose text-base text-ink-2">
-        {bn
-          ? "যা যা মিলিয়ে নিতে চান বেছে নিন — নিচের তালিকা সেই অনুযায়ী ছোট হয়ে আসবে। চূড়ান্ত সিদ্ধান্ত অডিওগ্রামের পর।"
-          : "Pick what matters and the list below narrows to match. The final choice is settled after the audiogram."}
+        {d.picker.lede}
       </p>
 
       <div className="mt-5 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
         <Row
-          label={bn ? "কতটা কম শুনছেন?" : "How much hearing is gone?"}
-          hint={
-            state.loss
-              ? LOSS_FEELS[state.loss][lang]
-              : bn
-              ? "নিশ্চিত না হলে আন্দাজে বেছে নিন।"
-              : "Guess if you are not sure."
-          }
+          label={d.picker.lossLabel}
+          hint={state.loss ? LOSS_FEELS[state.loss][lang] : d.picker.lossHint}
         >
           {LOSS_STEPS.map((level) => (
             <Choice
@@ -167,44 +178,40 @@ export default function NeedPicker({
         </Row>
 
         <Row
-          label={
-            bn
-              ? "ছোট ব্যাটারি বদলাতে অসুবিধা হয়?"
-              : "Is changing a tiny battery a problem?"
-          }
+          label={d.picker.batteryLabel}
         >
           <Choice
             on={state.rech === true}
             patch={{ rech: state.rech === true ? undefined : true }}
           >
-            {bn ? "হ্যাঁ, রিচার্জেবল চাই" : "Rechargeable"}
+            {d.picker.wantRechargeable}
           </Choice>
           <Choice
             on={state.rech === false}
             patch={{ rech: state.rech === false ? undefined : false }}
           >
-            {bn ? "না, ব্যাটারি চলবে" : "Battery is fine"}
+            {d.picker.batteryFine}
           </Choice>
         </Row>
 
-        <Row label={bn ? "বাজেট" : "Budget"}>
+        <Row label={d.picker.budgetLabel}>
           {BUDGETS.map((b) => (
             <Choice
               key={b.max}
               on={state.max === b.max}
               patch={{ max: state.max === b.max ? undefined : b.max }}
             >
-              {bn ? b.bn : b.en}
+              {b.label}
             </Choice>
           ))}
         </Row>
 
-        <Row label={bn ? "দেখতে" : "Visibility"}>
+        <Row label={d.picker.visibilityLabel}>
           <Choice
             on={!!state.hidden}
             patch={{ hidden: state.hidden ? undefined : true }}
           >
-            {bn ? "বাইরে থেকে দেখা না গেলে ভালো" : "Prefer it hidden"}
+            {d.picker.preferHidden}
           </Choice>
         </Row>
       </div>

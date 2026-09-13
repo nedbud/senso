@@ -1,11 +1,15 @@
 import Image from "next/image";
 import Link from "next/link";
-import { SITE, telLink } from "@/lib/site";
-import { dict, type Lang } from "@/lib/i18n";
+import { type Clinic, telFor } from "@/routes/clinic";
+import type { Lang } from "@/lib/i18n";
+import type { Dict } from "@/routes/dict";
 import SocialLinks from "@/components/ui/SocialLinks";
 
-export default function Footer({ lang }: { lang: Lang }) {
-  const d = dict(lang);
+export default function Footer({ lang, clinic,
+  d,
+}: { lang: Lang; clinic: Clinic;
+  d: Dict;
+}) {
   const bn = lang === "bn";
 
   return (
@@ -20,16 +24,16 @@ export default function Footer({ lang }: { lang: Lang }) {
             className="h-12 w-auto"
           />
           <p className="text-ink-2">
-            {bn ? SITE.address.lineBn : SITE.address.line}
+            {bn ? clinic.address.lineBn : clinic.address.line}
             <br />
             {bn
-              ? `${SITE.address.cityBn}-${SITE.address.postcode}`
-              : `${SITE.address.city}-${SITE.address.postcode}`}
+              ? `${clinic.address.cityBn}-${clinic.address.postcode}`
+              : `${clinic.address.city}-${clinic.address.postcode}`}
             <br />
             <span className="text-sm text-ink-muted">
-              {bn ? SITE.address.landmarkBn : SITE.address.landmark}
+              {bn ? clinic.address.landmarkBn : clinic.address.landmark}
               <br />
-              {bn ? SITE.address.floorNoteBn : SITE.address.floorNote}
+              {bn ? clinic.address.floorNoteBn : clinic.address.floorNote}
             </span>
           </p>
         </div>
@@ -38,20 +42,20 @@ export default function Footer({ lang }: { lang: Lang }) {
           <p className="font-ui text-base font-bold text-ink">
             {d.footer.contact}
           </p>
-          {SITE.phones.map((phone, i) => (
+          {clinic.phones.map((phone, i) => (
             <a
               key={phone}
-              href={telLink(phone)}
+              href={telFor(clinic, phone)}
               className="num block text-ink-2 hover:text-brand"
             >
-              {i === 0 ? SITE.phoneDisplay : i === 1 ? SITE.phoneDisplay2 : phone.replace("+88", "")}
+              {i === 0 ? clinic.phoneDisplay : i === 1 ? clinic.phoneDisplay2 : phone.replace("+88", "")}
             </a>
           ))}
           <a
-            href={`mailto:${SITE.email}`}
+            href={`mailto:${clinic.email}`}
             className="block text-ink-2 hover:text-brand"
           >
-            {SITE.email}
+            {clinic.email}
           </a>
           {/* One reachable place from every page — which is all a privacy
               notice needs, and more than it usually gets. */}
@@ -59,7 +63,7 @@ export default function Footer({ lang }: { lang: Lang }) {
             href={bn ? "/gopaniyota" : "/en/privacy"}
             className="block pt-1 text-ink-2 underline hover:text-brand"
           >
-            {bn ? "গোপনীয়তা ও তথ্য" : "Privacy"}
+            {d.social.privacy}
           </Link>
         </div>
 
@@ -76,9 +80,9 @@ export default function Footer({ lang }: { lang: Lang }) {
 
         <div className="space-y-3">
           <p className="font-ui text-base font-bold text-ink">
-            {bn ? "আমাদের সাথে থাকুন" : "Find us online"}
+            {d.social.heading}
           </p>
-          <SocialLinks lang={lang} />
+          <SocialLinks lang={lang} clinic={clinic} d={d} />
         </div>
       </div>
 

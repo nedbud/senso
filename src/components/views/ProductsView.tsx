@@ -18,7 +18,8 @@ import {
   listHref,
   type ListState,
 } from "@/lib/listUrl";
-import { dict, type Lang } from "@/lib/i18n";
+import { fill, type Lang } from "@/lib/i18n";
+import { getDict } from "@/routes/dict";
 import { formatTaka, toBengaliDigits } from "@/lib/site";
 
 const SORTS: SortKey[] = ["best", "trending", "leatest", "asc", "desc"];
@@ -43,8 +44,8 @@ export default async function ProductsView({
     max?: string;
   };
 }) {
-  const d = dict(lang);
   const bn = lang === "bn";
+  const d = await getDict(lang);
 
   const parsed = parseListState(searchParams);
   const state: ListState = {
@@ -79,9 +80,7 @@ export default async function ProductsView({
   );
 
   const title = state.parts
-    ? bn
-      ? "ব্যাটারি ও যন্ত্রাংশ"
-      : "Batteries and parts"
+    ? d.catalogue.partsTitle
     : activeSeries
     ? `ReSound ${activeSeries.name}`
     : d.products.heading;
@@ -99,18 +98,14 @@ export default async function ProductsView({
             {title}
           </h1>
           <p className="mt-4 max-w-prose text-lg leading-relaxed text-ink-2">
-            {state.parts
-              ? bn
-                ? "ব্যাটারি, ডোম, রিসিভার, ওয়াক্স গার্ড — যা যা লাগে। মেশিনের ছবি পাঠালে আমরা বলে দিতে পারি কোনটা আপনার লাগবে।"
-                : "Batteries, domes, receivers, wax guards. Send us a photo of the device and we will tell you which part it takes."
-              : d.products.lede}
+            {state.parts ? d.catalogue.partsLede : d.products.lede}
           </p>
 
           {stats && !state.parts && (
             <dl className="mt-8 flex flex-wrap gap-x-10 gap-y-5">
               <div>
                 <dt className="font-ui text-sm text-ink-muted">
-                  {bn ? "দাম" : "Prices"}
+                  {d.catalogue.pricesLabel}
                 </dt>
                 <dd className="num font-display text-2xl font-extrabold text-ink">
                   {formatTaka(stats.low)} – {formatTaka(stats.high)}
@@ -118,7 +113,7 @@ export default async function ProductsView({
               </div>
               <div>
                 <dt className="font-ui text-sm text-ink-muted">
-                  {bn ? "মডেল" : "Models"}
+                  {d.catalogue.modelsLabel}
                 </dt>
                 <dd className="num font-display text-2xl font-extrabold text-ink">
                   {bn ? toBengaliDigits(stats.count) : stats.count}
@@ -126,7 +121,7 @@ export default async function ProductsView({
               </div>
               <div>
                 <dt className="font-ui text-sm text-ink-muted">
-                  {bn ? "ব্র্যান্ড" : "Brand"}
+                  {d.catalogue.brandsLabel}
                 </dt>
                 <dd className="font-display text-2xl font-extrabold text-ink">
                   ReSound
@@ -137,7 +132,7 @@ export default async function ProductsView({
 
           <p className="mt-6 text-base text-ink-2">
             <a href="#list" className="underline underline-offset-4 hover:text-ink">
-              {bn ? "সরাসরি পুরো তালিকা দেখুন" : "Skip to the full list"}
+              {d.catalogue.skipToList}
             </a>
           </p>
         </div>
@@ -146,12 +141,13 @@ export default async function ProductsView({
       <div className="mx-auto max-w-6xl px-4 lg:px-8">
         {!state.parts && (
           <div className="py-10">
-            <NeedPicker lang={lang} state={current} pool={pool} />
+            <NeedPicker lang={lang} d={d} state={current} pool={pool} />
           </div>
         )}
 
         <div id="list" className="scroll-mt-32">
           <FilterBar
+          d={d}
             lang={lang}
             series={allSeries}
             state={current}
@@ -165,9 +161,7 @@ export default async function ProductsView({
               <div className="py-14 text-center">
                 <p className="text-lg text-ink-2">{d.products.empty}</p>
                 <p className="mt-2 text-base text-ink-muted">
-                  {bn
-                    ? "একটা শর্ত একটু আলগা করে দেখুন — অথবা আমাদের লিখুন, সাধারণত কিছু একটা বের করা যায়।"
-                    : "Try loosening one answer — or write to us, there is usually a way round it."}
+                  {d.catalogue.emptyHint}
                 </p>
                 <Link
                   href={listHref(lang, current, {
@@ -177,18 +171,19 @@ export default async function ProductsView({
                   })}
                   className="mt-5 inline-flex min-h-[48px] items-center rounded-lg border-[1.5px] border-line-strong bg-paper-surface px-5 font-ui text-ink hover:border-ink-2"
                 >
-                  {bn ? "সব মেশিন দেখুন" : "See every device"}
+                  {d.catalogue.seeEvery}
                 </Link>
               </div>
             ) : (
               <>
-                <ProductList products={shown} lang={lang} />
-                <Pagination lang={lang} state={current} pages={pages} />
+                <ProductList products={shown} lang={lang} d={d} />
+                <Pagination lang={lang} d={d} state={current} pages={pages} />
                 {pages > 1 && (
                   <p className="num mt-4 text-center text-sm text-ink-muted">
-                    {bn
-                      ? `${toBengaliDigits(pages)} পাতার ${toBengaliDigits(page)} নম্বর`
-                      : `Page ${page} of ${pages}`}
+                    {fill(d.catalogue.pageOf, {
+                      page: bn ? toBengaliDigits(page) : page,
+                      pages: bn ? toBengaliDigits(pages) : pages,
+                    })}
                   </p>
                 )}
               </>

@@ -1,29 +1,32 @@
 import { altLanguages } from "@/lib/site";
 import type { Metadata } from "next";
 import HomeView from "@/components/views/HomeView";
+import { getDict } from "@/routes/dict";
 
 export const revalidate = 3600;
 
 /**
- * The home page had no metadata of its own — only the layout's defaults — while
- * the English one had a title and description written for it. This is the page
- * most people arrive on and the one most likely to be shared, in the language
- * most of them read.
+ * Metadata is built at request time rather than declared, because the title
+ * and the description now come from the CMS like the rest of the page's
+ * words. They are also the only words a visitor reads before deciding whether
+ * to open the page at all, so leaving them where only a developer could reach
+ * them was the wrong way round.
  *
- * The title opens with what people type. "কানের মেশিনের দাম" is the search;
- * "সেনসো হিয়ারিং সেন্টার" is the answer, and it goes at the end where a brand
- * name belongs once the page has earned the click.
+ * The dictionary in src/lib/i18n.ts is still the fallback: a build with no API
+ * produces exactly the metadata the site has today.
  */
-export const metadata: Metadata = {
-  title: "কানের মেশিনের দাম ও কান পরীক্ষা — সেনসো হিয়ারিং সেন্টার, পান্থপথ",
-  description:
-    "পান্থপথ, ঢাকা। ReSound-এর অনুমোদিত ডিলার। প্রতিটি মেশিনের দাম ওয়েবসাইটেই লেখা। পূর্ণ কান পরীক্ষা ৩৫ মিনিটে, রিপোর্ট একই দিনে।",
-  alternates: {
-    canonical: "/",
-    languages: altLanguages("/", "/en"),
-  },
-  openGraph: { locale: "bn_BD" },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const d = await getDict("bn");
+  return {
+    title: d.seo.homeTitle,
+    description: d.seo.homeDescription,
+    alternates: {
+      canonical: "/",
+      languages: altLanguages("/", "/en"),
+    },
+    openGraph: { locale: "bn_BD" },
+  };
+}
 
 export default function Page() {
   return <HomeView lang="bn" />;

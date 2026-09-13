@@ -1,4 +1,6 @@
-import { SITE, TESTS, TEST_PACKAGE } from "@/lib/site";
+import { SITE } from "@/lib/site";
+import type { Clinic } from "@/routes/clinic";
+import { say, type Test } from "@/routes/details";
 
 /**
  * Structured data. The site had none at all, which meant Google had no
@@ -18,74 +20,113 @@ function Script({ data }: { data: object }) {
 
 export const CLINIC_ID = `${SITE.url}/#clinic`;
 
-export function ClinicJsonLd() {
+/** Schema.org day names, indexed the way JavaScript indexes weekdays. */
+const DAY_OF_WEEK = [
+  "Sunday", "Monday", "Tuesday", "Wednesday",
+  "Thursday", "Friday", "Saturday",
+] as const;
+
+const atHour = (hour: number) => `${String(hour).padStart(2, "0")}:00`;
+
+/**
+ * One specification per distinct span, with the days that share it grouped.
+ *
+ * Built from the clinic's own hours rather than written out, because hours
+ * that disagree with the visible page are worse than no structured data at
+ * all: Google reads the mismatch as a reason to trust neither.
+ */
+function openingHours(hours: Clinic["hours"]) {
+  const spans = new Map<string, { opens: string; closes: string; days: string[] }>();
+
+  for (let day = 0; day < 7; day++) {
+    const span = hours[day];
+    if (!span || span.length < 2) continue;
+
+    const key = `${span[0]}-${span[1]}`;
+    const existing = spans.get(key);
+    if (existing) {
+      existing.days.push(DAY_OF_WEEK[day]);
+      continue;
+    }
+    spans.set(key, {
+      opens: atHour(span[0]),
+      closes: atHour(span[1]),
+      days: [DAY_OF_WEEK[day]],
+    });
+  }
+
+  return Array.from(spans.values()).map((span) => ({
+    "@type": "OpeningHoursSpecification",
+    dayOfWeek: span.days,
+    opens: span.opens,
+    closes: span.closes,
+  }));
+}
+
+export function ClinicJsonLd({ clinic, tests }: { clinic: Clinic; tests: Test[] }) {
+  // The address, phones and hours here are the same ones the footer prints.
+  // Structured data that disagrees with the visible page is worse than none:
+  // Google treats the mismatch as a reason to trust neither.
   return (
     <Script
       data={{
         "@context": "https://schema.org",
         "@type": ["MedicalClinic", "LocalBusiness"],
         "@id": CLINIC_ID,
-        name: SITE.name,
-        alternateName: SITE.nameBn,
+        name: clinic.name,
+        alternateName: clinic.nameBn,
         medicalSpecialty: "Otolaryngologic",
-        url: SITE.url,
+        url: clinic.url,
         // The profiles that are the same business. This is what lets Google
         // treat the site, the Facebook page and the channel as one entity.
-        sameAs: [SITE.social.facebook, SITE.social.youtube],
-        telephone: SITE.phones[0],
-        email: SITE.email,
+        sameAs: [clinic.social.facebook, clinic.social.youtube],
+        telephone: clinic.phones[0],
+        email: clinic.email,
         knowsLanguage: ["bn", "en"],
         currenciesAccepted: "BDT",
         address: {
           "@type": "PostalAddress",
-          streetAddress: SITE.address.line,
-          addressLocality: SITE.address.city,
-          postalCode: SITE.address.postcode,
-          addressCountry: SITE.address.country,
+          streetAddress: clinic.address.line,
+          addressLocality: clinic.address.city,
+          postalCode: clinic.address.postcode,
+          addressCountry: clinic.address.country,
         },
         areaServed: { "@type": "Country", name: "Bangladesh" },
-        openingHoursSpecification: [
-          {
-            "@type": "OpeningHoursSpecification",
-            dayOfWeek: [
-              "Saturday", "Sunday", "Monday",
-              "Tuesday", "Wednesday", "Thursday",
-            ],
-            opens: "10:00",
-            closes: "20:00",
-          },
-        ],
+        openingHoursSpecification: openingHours(clinic.hours),
         geo: {
           "@type": "GeoCoordinates",
-          latitude: SITE.address.geo.lat,
-          longitude: SITE.address.geo.lng,
+          latitude: clinic.address.geo.lat,
+          longitude: clinic.address.geo.lng,
         },
-        hasMap: SITE.address.mapsUrl,
+        hasMap: clinic.address.mapsUrl,
         paymentAccepted: "Cash, Credit Card, Debit Card, bKash, Bangla QR",
+        // English names, whatever the page's language: this is read by a
+        // crawler, not by a visitor.
         availableService: [
+          ...tests.map((test) => ({
+            "@type": "MedicalTest",
+            name: say(test.name, "en"),
+            offers: {
+              "@type": "Offer",
+              priceCurrency: "BDT",
+              price: String(test.fee),
+            },
+          })),
           {
             "@type": "MedicalTest",
-            name: "Pure Tone Audiometry (PTA)",
-            offers: { "@type": "Offer", priceCurrency: "BDT", price: String(TESTS[0].fee) },
-          },
-          {
-            "@type": "MedicalTest",
-            name: "Tympanometry",
-            offers: { "@type": "Offer", priceCurrency: "BDT", price: String(TESTS[1].fee) },
-          },
-          {
-            "@type": "MedicalTest",
-            name: "Speech Reception Threshold (SRT)",
-            offers: { "@type": "Offer", priceCurrency: "BDT", price: String(TESTS[2].fee) },
-          },
-          {
-            "@type": "MedicalTest",
-            name: "Full hearing assessment (PTA, tympanometry and speech)",
-            offers: { "@type": "Offer", priceCurrency: "BDT", price: String(TEST_PACKAGE.fee) },
+            name: "Full hearing assessment",
+            offers: {
+              "@type": "Offer",
+              priceCurrency: "BDT",
+              price: String(clinic.testPackage.fee),
+            },
           },
           { "@type": "Service", name: "Hearing aid fitting and verification" },
           { "@type": "Service", name: "Ear mould making" },
-          { "@type": "Service", name: "ReSound hearing aid repair and servicing" },
+          {
+            "@type": "Service",
+            name: `${clinic.dealer.brand} hearing aid repair and servicing`,
+          },
         ],
       }}
     />

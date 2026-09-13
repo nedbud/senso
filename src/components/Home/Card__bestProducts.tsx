@@ -2,6 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { formatTaka } from "@/lib/site";
 import { type Lang } from "@/lib/i18n";
+import type { Dict } from "@/routes/dict";
 import { toDevice, lossRangeLabel, FORM_FACTOR } from "@/lib/catalogue";
 import type { ProductMapInterface } from "@/routes/product";
 
@@ -21,10 +22,12 @@ import type { ProductMapInterface } from "@/routes/product";
 export default function ProductCard({
   item,
   lang,
+  dict,
   priority = false,
 }: {
   item: ProductMapInterface;
   lang: Lang;
+  dict: Dict;
   priority?: boolean;
 }) {
   const bn = lang === "bn";
@@ -60,7 +63,7 @@ export default function ProductCard({
         {!d.isAccessory && (
           <p className="mt-0.5 text-sm leading-snug text-ink-2">
             {lossRangeLabel(d, lang)}
-            {bn ? " শ্রবণক্ষয়ের জন্য" : " loss"}
+            {dict.catalogue.lossSuffix}
             {d.formFactor && (
               <span className="hidden text-ink-muted sm:block">
                 {FORM_FACTOR[d.formFactor].short[lang]}

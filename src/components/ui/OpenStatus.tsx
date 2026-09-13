@@ -1,5 +1,5 @@
 import { getOpenState, SITE } from "@/lib/site";
-import { dict, clockLabel, DAY_NAMES, type Lang } from "@/lib/i18n";
+import { dict, clockLabel, fill, DAY_NAMES, type Lang } from "@/lib/i18n";
 
 /**
  * "Is it open today?" is the single most frequent question in the Facebook
@@ -14,7 +14,7 @@ export default function OpenStatus({ lang }: { lang: Lang }) {
 
   let detail: string = d.hero.hoursFallback;
   if (state.isOpen && state.closesAt != null) {
-    detail = d.hero.openUntil(clockLabel(state.closesAt, lang));
+    detail = fill(d.hero.openUntil, { hour: clockLabel(state.closesAt, lang) });
   } else if (state.nextDay != null && state.nextOpensAt != null) {
     const today = new Date(
       new Date().toLocaleString("en-US", { timeZone: "Asia/Dhaka" })
@@ -23,7 +23,10 @@ export default function OpenStatus({ lang }: { lang: Lang }) {
     const dayName = isTomorrow
       ? d.hero.tomorrow
       : DAY_NAMES[lang][state.nextDay];
-    detail = d.hero.opensAt(dayName, clockLabel(state.nextOpensAt, lang));
+    detail = fill(d.hero.opensAt, {
+      day: dayName,
+      hour: clockLabel(state.nextOpensAt, lang),
+    });
   }
 
   return (

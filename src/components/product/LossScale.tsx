@@ -1,5 +1,6 @@
 import { LOSS_LABEL, type Device, type LossLevel } from "@/lib/catalogue";
-import type { Lang } from "@/lib/i18n";
+import { fill, type Lang } from "@/lib/i18n";
+import type { Dict } from "@/routes/dict";
 
 const ORDER: LossLevel[] = ["mild", "moderate", "severe", "profound"];
 
@@ -15,9 +16,11 @@ const ORDER: LossLevel[] = ["mild", "moderate", "severe", "profound"];
 export default function LossScale({
   device,
   lang,
+  d,
 }: {
   device: Device;
   lang: Lang;
+  d: Dict;
 }) {
   const from = ORDER.indexOf(device.lossFrom);
   const to = ORDER.indexOf(device.lossTo);
@@ -55,9 +58,10 @@ export default function LossScale({
         })}
       </div>
       <p className="sr-only">
-        {lang === "bn"
-          ? `এই মেশিনটি ${LOSS_LABEL[device.lossFrom].bn} থেকে ${LOSS_LABEL[device.lossTo].bn} মাত্রার শ্রবণক্ষয়ের জন্য।`
-          : `Fitted for ${LOSS_LABEL[device.lossFrom].en} to ${LOSS_LABEL[device.lossTo].en} hearing loss.`}
+        {fill(d.deviceFaq.scaleNote, {
+          from: LOSS_LABEL[device.lossFrom][lang],
+          to: LOSS_LABEL[device.lossTo][lang],
+        })}
       </p>
     </div>
   );

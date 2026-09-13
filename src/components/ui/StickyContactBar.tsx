@@ -1,8 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { SITE, whatsappLink, telLink } from "@/lib/site";
-import { dict, type Lang } from "@/lib/i18n";
+import { type Clinic, whatsappFor, telFor } from "@/routes/clinic";
+import type { Lang } from "@/lib/i18n";
+import type { Dict } from "@/routes/dict";
 import { PhoneIcon, WhatsAppIcon } from "./Icons";
 
 /**
@@ -13,8 +14,14 @@ import { PhoneIcon, WhatsAppIcon } from "./Icons";
  * that should feel calm. Past the hero it earns its place: an older reader
  * scrolling slowly should never have to remember where the button was.
  */
-export default function StickyContactBar({ lang }: { lang: Lang }) {
-  const d = dict(lang);
+// The clinic record arrives as a prop rather than being read here: this is a
+// client component, and a fetch from the browser would be a second request for
+// something the server already had.
+export default function StickyContactBar({ lang, clinic,
+  d,
+}: { lang: Lang; clinic: Clinic;
+  d: Dict;
+}) {
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
@@ -40,7 +47,7 @@ export default function StickyContactBar({ lang }: { lang: Lang }) {
       }`}
     >
       <a
-        href={telLink()}
+        href={telFor(clinic)}
         tabIndex={visible ? 0 : -1}
         className="inline-flex min-h-[52px] items-center justify-center gap-2 rounded-lg border-[1.5px] border-line-strong bg-paper-surface px-4 font-ui text-ink"
       >
@@ -48,7 +55,7 @@ export default function StickyContactBar({ lang }: { lang: Lang }) {
         {d.nav.call}
       </a>
       <a
-        href={whatsappLink(d.wa.appointment)}
+        href={whatsappFor(clinic, d.wa.appointment)}
         target="_blank"
         rel="noopener noreferrer"
         tabIndex={visible ? 0 : -1}
