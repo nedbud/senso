@@ -31,3 +31,9 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
+# No file holding real configuration belongs in this repository. The deployed
+# site reads its values from Vercel's environment variables; development reads
+# .env.local, which stays on your machine. .env.example documents what exists.
+.env
+.env.*
+!.env.example

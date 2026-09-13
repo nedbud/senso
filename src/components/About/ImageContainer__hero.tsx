@@ -33,7 +33,7 @@ export default function ImageContainer({ gallery }: ImageContainerItem) {
           </h2>
 
           <div className="flex justify-start items-center p-2 lg:p-4 lg:h-1/6 w-full bg-stone-900/50 lg:rounded-md shadow-md">
-            <p className="text-white text-[11px] lg:text-base">
+            <p className="text-white text-micro lg:text-base">
               {gallery.description}
             </p>
           </div>

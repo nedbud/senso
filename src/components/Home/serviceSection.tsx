@@ -67,7 +67,7 @@ export default function Service({ lang }: { lang: Lang }) {
       id="services"
       className="mx-auto max-w-7xl px-4 py-12 lg:px-8"
     >
-      <h2 className="mb-6 text-[clamp(24px,4.6vw,31px)] text-ink">{heading}</h2>
+      <h2 className="mb-6 text-2xl text-ink">{heading}</h2>
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {SERVICES.map((s) => (
           <div
@@ -82,10 +82,10 @@ export default function Service({ lang }: { lang: Lang }) {
               unoptimized
               className="h-12 w-12"
             />
-            <h3 className="font-display text-xl font-semibold text-ink">
+            <h3 className="font-ui text-xl font-semibold text-ink">
               {s.title[lang]}
             </h3>
-            <p className="text-[17px] text-ink-2">{s.body[lang]}</p>
+            <p className="text-base text-ink-2">{s.body[lang]}</p>
           </div>
         ))}
       </div>

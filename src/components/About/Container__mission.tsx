@@ -30,7 +30,7 @@ export default function Container({ missions, cover }: ContainerItem) {
             className="flex flex-row space-x-2 lg:space-x-4 items-center"
           >
             <CheckCircleIcon className="h-5 w-5 lg:h-8 lg:w-8 stroke-red-600 fill-white" />
-            <p className="text-gray-600 font-semibold text-[8px] lg:text-base">
+            <p className="text-gray-600 font-semibold text-micro lg:text-base">
               {item.description}
             </p>
           </div>

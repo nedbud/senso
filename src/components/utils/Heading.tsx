@@ -35,7 +35,7 @@ const Heading: React.FC<HeadingProps> = ({ heading, description, red }) => {
       <p
         className={`${
           red ? "text-white/70" : "text-gray-500"
-        } lg:w-1/2 text-center text-[10px] lg:text-sm font-semibold`}
+        } lg:w-1/2 text-center text-micro lg:text-sm font-semibold`}
       >
         {description}
       </p>

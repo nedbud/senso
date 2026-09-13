@@ -15,7 +15,7 @@ export default function SingleHistory({ history }: SingleHistoryItem) {
         <span className="font-bold lg:text-lg group-hover:text-xl lg:group-hover:text-3xl group-hover:text-white/90 text-white mb-3 transition-all duration-500">
           {history.year}
         </span>
-        <p className="text-[11px] group-hover:text-md lg:text-sm lg:group-hover:text-lg font-bold lg:w-2/3 lg:group-hover:w-5/6 group-hover:text-white/50 transition-all duration-500">
+        <p className="text-micro group-hover:text-md lg:text-sm lg:group-hover:text-lg font-bold lg:w-2/3 lg:group-hover:w-5/6 group-hover:text-white/50 transition-all duration-500">
           {history.description}
         </p>
       </div>

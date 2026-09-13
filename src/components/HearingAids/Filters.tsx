@@ -39,7 +39,7 @@ export default function Filters({
   };
 
   const chip = (isActive: boolean) =>
-    `inline-flex min-h-[44px] items-center rounded-full border-[1.5px] px-4 font-display font-semibold ${
+    `inline-flex min-h-[44px] items-center rounded-full border-[1.5px] px-4 font-ui ${
       isActive
         ? "border-brand bg-brand text-white"
         : "border-line-strong bg-paper-surface text-ink hover:border-ink-2"
@@ -55,7 +55,7 @@ export default function Filters({
   return (
     <div className="flex flex-col gap-5">
       <div>
-        <p className="mb-2 font-display font-semibold text-ink-2">
+        <p className="mb-2 font-ui text-ink-2">
           {d.products.filterSeries}
         </p>
         <div className="flex flex-wrap gap-2">
@@ -80,7 +80,7 @@ export default function Filters({
       </div>
 
       <div>
-        <p className="mb-2 font-display font-semibold text-ink-2">
+        <p className="mb-2 font-ui text-ink-2">
           {d.products.sortBy}
         </p>
         <div className="flex flex-wrap gap-2">

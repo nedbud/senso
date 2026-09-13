@@ -29,6 +29,9 @@ export function ClinicJsonLd() {
         alternateName: SITE.nameBn,
         medicalSpecialty: "Otolaryngologic",
         url: SITE.url,
+        // The profiles that are the same business. This is what lets Google
+        // treat the site, the Facebook page and the channel as one entity.
+        sameAs: [SITE.social.facebook, SITE.social.youtube],
         telephone: SITE.phones[0],
         email: SITE.email,
         knowsLanguage: ["bn", "en"],
@@ -175,6 +178,34 @@ export function FaqJsonLd({
           "@type": "Question",
           name: i.question,
           acceptedAnswer: { "@type": "Answer", text: i.answer },
+        })),
+      }}
+    />
+  );
+}
+
+/**
+ * Breadcrumbs. Google renders these in place of the raw URL in the result,
+ * which on a 109-page catalogue is the difference between a result that
+ * reads "sensohearingdhaka.com › hearing-aids › resound-nexia-461" and one
+ * that reads as a path a person understands.
+ */
+export function BreadcrumbJsonLd({
+  items,
+}: {
+  items: { name: string; url: string }[];
+}) {
+  if (!items.length) return null;
+  return (
+    <Script
+      data={{
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        itemListElement: items.map((item, i) => ({
+          "@type": "ListItem",
+          position: i + 1,
+          name: item.name,
+          item: item.url,
         })),
       }}
     />

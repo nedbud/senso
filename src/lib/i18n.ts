@@ -54,8 +54,8 @@ export const t = {
     },
 
     products: {
-      heading: "কানের মেশিনের দাম",
-      lede: "দাম লুকিয়ে রাখার কিছু নেই। কোনটা আপনার লাগবে তা ঠিক হবে অডিওগ্রামের পর — কম শোনার মাত্রা যত বেশি, তত বেশি ক্ষমতার মেশিন লাগে।",
+      heading: "কোন মেশিন, কত দাম",
+      lede: "কম শোনার মাত্রা যত বেশি, মেশিনের ক্ষমতা তত বেশি লাগে — দামের পার্থক্যটা এখান থেকেই। কোনটা আপনার লাগবে, ঠিক হয় অডিওগ্রামের পর।",
       all: "সব মেশিন দেখুন",
       from: "থেকে শুরু",
       series: "সিরিজ",
@@ -69,7 +69,7 @@ export const t = {
       allSeries: "সব",
     },
 
-    faq: { heading: "যে প্রশ্নগুলো সবচেয়ে বেশি আসে" },
+    faq: { heading: "আরও কিছু প্রশ্ন" },
 
     footer: {
       hours: "সময়সূচি",
@@ -78,7 +78,7 @@ export const t = {
       address: "ঠিকানা",
       contact: "যোগাযোগ",
       distributor:
-        "ReSound (GN, ডেনমার্ক)-এর অনুমোদিত ডিলার। ট্রেড লাইসেন্স TRAD/DSCC/242022/2019।",
+        "ReSound (GN, ডেনমার্ক)-এর অনুমোদিত ডিলার। পান্থপথে ২০০৭ সাল থেকে।",
     },
 
     common: {
@@ -129,8 +129,8 @@ export const t = {
     },
 
     products: {
-      heading: "Hearing aid prices",
-      lede: "There is nothing to hide here. Which device you need is decided after the hearing test — the greater the loss, the more powerful the device.",
+      heading: "Which device, what price",
+      lede: "The greater the hearing loss, the more powerful the device has to be — which is where the spread in price comes from. Which one you need is settled after the audiogram.",
       all: "See all hearing aids",
       from: "from",
       series: "Series",
@@ -144,7 +144,7 @@ export const t = {
       allSeries: "All",
     },
 
-    faq: { heading: "The questions we get most" },
+    faq: { heading: "A few more questions" },
 
     footer: {
       hours: "Opening hours",
@@ -153,7 +153,7 @@ export const t = {
       address: "Address",
       contact: "Contact",
       distributor:
-        "Authorised ReSound (GN, Denmark) dealer in Bangladesh. Trade licence TRAD/DSCC/242022/2019.",
+        "Authorised ReSound (GN, Denmark) dealer in Bangladesh. In Panthapath since 2007.",
     },
 
     common: {

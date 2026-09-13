@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { dict, type Lang } from "@/lib/i18n";
-import { formatTaka } from "@/lib/site";
-import { priceStats, type ProductMapInterface } from "@/routes/product";
+import type { ProductMapInterface } from "@/routes/product";
 import ProductCard from "./Card__bestProducts";
 
 /**
@@ -21,23 +20,18 @@ export default function BestProducts({
   const d = dict(lang);
   if (!products.length) return null;
 
-  const stats = priceStats(products);
 
   return (
-    <section className="mx-auto max-w-7xl px-4 py-12 lg:px-8">
-      <div className="mx-auto mb-6 flex max-w-3xl flex-col gap-3">
-        <h2 className="text-[clamp(24px,4.6vw,31px)] text-ink">
+    <section className="mx-auto max-w-5xl px-4 py-10 lg:px-8">
+      <div className="mb-6 flex max-w-3xl flex-col gap-3">
+        <h2 className="text-xl font-bold tracking-tightest text-ink">
           {d.products.heading}
         </h2>
-        <p className="max-w-prose text-xl text-ink-2">{d.products.lede}</p>
-        {stats && (
-          <p className="font-display text-lg font-semibold text-ink">
-            <span className="num">{formatTaka(stats.low)}</span> {d.products.from}
-          </p>
-        )}
+        <p className="max-w-prose text-base text-ink-2">{d.products.lede}</p>
+
       </div>
 
-      <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
+      <div className="grid grid-cols-2 gap-4 md:grid-cols-3">
         {products.map((product) => (
           <ProductCard key={product.slug} item={product} lang={lang} />
         ))}
@@ -46,7 +40,7 @@ export default function BestProducts({
       <div className="mt-8 text-center">
         <Link
           href={lang === "en" ? "/en/hearing-aids" : "/hearing-aids"}
-          className="inline-flex min-h-[52px] items-center justify-center rounded-lg border-[1.5px] border-line-strong bg-paper-surface px-6 font-display text-lg font-semibold text-ink hover:border-ink-2"
+          className="inline-flex min-h-[52px] items-center justify-center rounded-lg border-[1.5px] border-line-strong bg-paper-surface px-6 font-ui text-lg font-semibold text-ink hover:border-ink-2"
         >
           {d.products.all}
         </Link>
