@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { dict, type Lang } from "@/lib/i18n";
 import { formatTaka } from "@/lib/site";
-import type { ProductMapInterface } from "@/routes/product";
+import { priceStats, type ProductMapInterface } from "@/routes/product";
 import ProductCard from "./Card__bestProducts";
 
 /**
@@ -21,10 +21,7 @@ export default function BestProducts({
   const d = dict(lang);
   if (!products.length) return null;
 
-  const prices = products
-    .map((p) => parseFloat(p.price))
-    .filter((n) => isFinite(n) && n > 0);
-  const low = prices.length ? Math.min(...prices) : 0;
+  const stats = priceStats(products);
 
   return (
     <section className="mx-auto max-w-7xl px-4 py-12 lg:px-8">
@@ -33,9 +30,9 @@ export default function BestProducts({
           {d.products.heading}
         </h2>
         <p className="max-w-prose text-xl text-ink-2">{d.products.lede}</p>
-        {low > 0 && (
+        {stats && (
           <p className="font-display text-lg font-semibold text-ink">
-            <span className="num">{formatTaka(low)}</span> {d.products.from}
+            <span className="num">{formatTaka(stats.low)}</span> {d.products.from}
           </p>
         )}
       </div>

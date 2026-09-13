@@ -26,6 +26,8 @@ export default function Footer({ lang }: { lang: Lang }) {
             <br />
             <span className="text-[15.5px] text-ink-muted">
               {bn ? SITE.address.landmarkBn : SITE.address.landmark}
+              <br />
+              {bn ? SITE.address.floorNoteBn : SITE.address.floorNote}
             </span>
           </p>
         </div>
@@ -40,7 +42,7 @@ export default function Footer({ lang }: { lang: Lang }) {
               href={telLink(phone)}
               className="num block text-ink-2 hover:text-brand"
             >
-              {i === 0 ? SITE.phoneDisplay : phone.replace("+88", "")}
+              {i === 0 ? SITE.phoneDisplay : i === 1 ? SITE.phoneDisplay2 : phone.replace("+88", "")}
             </a>
           ))}
           <a

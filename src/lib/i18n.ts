@@ -30,13 +30,13 @@ export const t = {
     },
 
     hero: {
-      eyebrow: "পান্থপথ, ঢাকা · ReSound-এর বাংলাদেশ পরিবেশক",
+      eyebrow: "পান্থপথ, ঢাকা · ReSound-এর অনুমোদিত ডিলার",
       // Opens on the delay, not the product. Average time from noticing
       // hearing loss to seeking help is 4-10 years, and most people who
       // have not acted believe their loss is only mild. Naming the delay
       // turns guilt into permission.
       title: "কানে কম শোনা নিয়ে বেশিরভাগ মানুষ প্রায় দশ বছর অপেক্ষা করেন।",
-      lede: "আর অপেক্ষা করার দরকার নেই। কান পরীক্ষা করাতে ৩৫ মিনিট লাগে, রিপোর্ট একই দিনে হাতে পাবেন। মেশিন নেওয়ার সিদ্ধান্ত পরে — আগে জানুন আসলে কী অবস্থা।",
+      lede: "আর অপেক্ষা করার দরকার নেই। পূর্ণ কান পরীক্ষা ৩৫ মিনিটে, ফি ৳ 1,600 — রিপোর্ট একই দিনে হাতে পাবেন। মেশিন নেওয়ার সিদ্ধান্ত পরে, আগে জানুন আসলে কী অবস্থা।",
       ctaWhatsapp: "হোয়াটসঅ্যাপে লিখুন",
       ctaCall: "ফোন করুন",
       // The differentiator. A hearing clinic whose only CTA is "call us"
@@ -78,13 +78,13 @@ export const t = {
       address: "ঠিকানা",
       contact: "যোগাযোগ",
       distributor:
-        "ReSound (GN, ডেনমার্ক)-এর বাংলাদেশ পরিবেশক — Tabassum International C/O Senso Hearing Centre.",
+        "ReSound (GN, ডেনমার্ক)-এর অনুমোদিত ডিলার। ট্রেড লাইসেন্স TRAD/DSCC/242022/2019।",
     },
 
     common: {
       langLabel: "English",
       map: "ম্যাপে দেখুন",
-      verify: "ReSound-এর পরিবেশক তালিকায় দেখুন",
+      verify: "ReSound-এর নিজের তালিকায় দেখুন",
     },
 
     wa: {
@@ -111,10 +111,10 @@ export const t = {
 
     hero: {
       eyebrow:
-        "Panthapath, Dhaka · Authorised ReSound distributor for Bangladesh",
+        "Panthapath, Dhaka · Authorised ReSound dealer in Bangladesh",
       title:
         "Most people live with hearing loss for about ten years before doing anything about it.",
-      lede: "There is no reason to wait any longer. A hearing test takes 35 minutes and you leave with the report the same day. Whether to buy anything comes later — first find out where you actually stand.",
+      lede: "There is no reason to wait any longer. A full hearing assessment takes 35 minutes and costs ৳ 1,600, and you leave with the report the same day. Whether to buy anything comes later — first find out where you actually stand.",
       ctaWhatsapp: "Message us on WhatsApp",
       ctaCall: "Call us",
       phoneNoteTitle: "Find phone calls difficult?",
@@ -153,13 +153,13 @@ export const t = {
       address: "Address",
       contact: "Contact",
       distributor:
-        "Authorised distributor for ReSound (GN, Denmark) in Bangladesh — Tabassum International C/O Senso Hearing Centre.",
+        "Authorised ReSound (GN, Denmark) dealer in Bangladesh. Trade licence TRAD/DSCC/242022/2019.",
     },
 
     common: {
       langLabel: "বাংলা",
       map: "Open in Maps",
-      verify: "See us on ReSound's distributor list",
+      verify: "See us on ReSound's own listing",
     },
 
     wa: {

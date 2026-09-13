@@ -1,0 +1,152 @@
+# Build once, deploy that exact thing.
+#
+# CI builds an image, tags it with the commit, pushes it to the registry, then
+# tells the server to pull that tag. Configuration comes from GitHub Secrets
+# and is written to the server by this workflow, so `.env` is an OUTPUT of the
+# deploy, never an input somebody maintains by hand.
+#
+# Rolling back is deploying an older tag. Nothing is rebuilt for that, because
+# the old image still exists.
+
+name: deploy
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Image tag to deploy (default: this commit)"
+        required: false
+
+concurrency:
+  group: deploy-landing-production
+  cancel-in-progress: false
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE: ghcr.io/${{ github.repository }}
+  # Not a secret by construction: Next compiles this into the JavaScript it
+  # sends to the browser, so anyone can read it in devtools. Keeping it in the
+  # workflow rather than the secret store means the value that was built into
+  # a given image is visible in that run's log, which is the only way to answer
+  # "which CMS was this build talking to?" after the fact.
+  PUBLIC_BASE_URL: https://cms.sensohearingdhaka.com
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    outputs:
+      tag: ${{ steps.pick.outputs.tag }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - id: pick
+        run: echo "tag=${{ inputs.tag || github.sha }}" >> "$GITHUB_OUTPUT"
+
+      - uses: docker/setup-buildx-action@v3
+
+      - uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      # Skipped entirely when re-deploying an existing tag — the point of an
+      # immutable image is that you do not rebuild to roll back.
+      - name: Build and push
+        if: ${{ !inputs.tag }}
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          build-args: |
+            NEXT_PUBLIC_BASE_URL=${{ env.PUBLIC_BASE_URL }}
+          tags: |
+            ${{ env.IMAGE }}:${{ github.sha }}
+            ${{ env.IMAGE }}:latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment: production
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Copy configuration to the server
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.DEPLOY_HOST }}
+          username: ${{ secrets.DEPLOY_USER }}
+          key: ${{ secrets.DEPLOY_SSH_KEY }}
+          source: "compose.prod.yml"
+          target: ${{ secrets.DEPLOY_PATH }}
+
+      - name: Deploy
+        uses: appleboy/ssh-action@v1.0.3
+        env:
+          IMAGE_TAG: ${{ needs.build.outputs.tag }}
+        with:
+          host: ${{ secrets.DEPLOY_HOST }}
+          username: ${{ secrets.DEPLOY_USER }}
+          key: ${{ secrets.DEPLOY_SSH_KEY }}
+          envs: IMAGE_TAG
+          script_stop: true
+          script: |
+            set -e
+            cd ${{ secrets.DEPLOY_PATH }}
+
+            # .env is written from the secret store on every deploy, so what
+            # production holds is always exactly what the secrets say.
+            #
+            # Base64 rather than a heredoc: the file holds keys, and a key with
+            # a quote, a backtick or a $ in it would either break the heredoc or
+            # be silently mangled by the shell on the way through.
+            umask 077
+
+            # `tr -d` first: copying a very long single line out of a terminal
+            # picks up the wrapping as real newlines surprisingly often, and
+            # base64 rejects those as invalid input.
+            printf '%s' "${{ secrets.PRODUCTION_ENV_B64 }}" \
+              | tr -d ' \t\r\n' \
+              | base64 -d > .env 2>/dev/null || true
+
+            echo "SENSO_LANDING_IMAGE=ghcr.io/${{ github.repository }}:${IMAGE_TAG}" >> .env
+
+            echo "${{ secrets.GHCR_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+
+            docker compose -f compose.prod.yml pull
+            docker compose -f compose.prod.yml up -d --remove-orphans
+
+            docker image prune -f
+            docker compose -f compose.prod.yml ps
+
+      - name: Check it answers
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.DEPLOY_HOST }}
+          username: ${{ secrets.DEPLOY_USER }}
+          key: ${{ secrets.DEPLOY_SSH_KEY }}
+          # Three minutes. A recreated container has to start Next before it
+          # answers anything, and reporting a deploy red while the site is in
+          # fact fine is worse than useless — it teaches everyone to ignore the
+          # red runs.
+          script: |
+            cd ${{ secrets.DEPLOY_PATH }}
+            for i in $(seq 1 36); do
+              code=$(curl -s -o /dev/null -w '%{http_code}' http://127.0.0.1:8093/ || true)
+              case "$code" in
+                200|302|307) echo "healthy ($code) after $(( (i - 1) * 5 ))s"; exit 0 ;;
+              esac
+              echo "waiting… ($code)"; sleep 5
+            done
+            echo "the site did not come back healthy in 3 minutes" >&2
+            docker compose -f compose.prod.yml logs app --tail 40 >&2 || true
+            exit 1

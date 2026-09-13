@@ -13,8 +13,8 @@ const SERVICES: {
     image: "/assets/Images/Services/ear.gif",
     title: { bn: "কান পরীক্ষা", en: "Hearing test" },
     body: {
-      bn: "PTA, Tympanometry ও Speech — তিনটি টেস্ট ও রিপোর্ট মিলিয়ে ৩৫ মিনিট। রিপোর্ট হাতে নিয়েই ডাক্তার দেখাতে পারবেন।",
-      en: "PTA, tympanometry and speech — three tests and the report in 35 minutes. You leave with it in hand.",
+      bn: "PTA, Tympanometry ও Speech — তিনটি টেস্ট ও রিপোর্ট মিলিয়ে ৩৫ মিনিট, ফি ৳ 1,600। রিপোর্ট হাতে নিয়েই ডাক্তার দেখাতে পারবেন।",
+      en: "PTA, tympanometry and speech — three tests and the report in 35 minutes, ৳ 1,600. You leave with it in hand.",
     },
   },
   {
@@ -37,8 +37,8 @@ const SERVICES: {
     image: "/assets/Images/Services/gear.gif",
     title: { bn: "মেরামত ও সার্ভিসিং", en: "Repair and servicing" },
     body: {
-      bn: "যেকোনো ব্র্যান্ড, বিদেশ থেকে কেনা হলেও। ছবি পাঠালে আগেই বলে দিতে পারব যন্ত্রাংশ আছে কি না।",
-      en: "Any brand, including devices bought abroad. Send a photo and we can tell you in advance if we have the part.",
+      bn: "ReSound মেশিন, বিদেশ থেকে কেনা হলেও। নিজস্ব ল্যাবে সাধারণত ১ দিনে। ছবি পাঠালে আগেই বলে দিতে পারব যন্ত্রাংশ আছে কি না।",
+      en: "ReSound devices, including ones bought abroad. Usually one day in our own lab. Send a photo and we can tell you in advance if we have the part.",
     },
   },
   {

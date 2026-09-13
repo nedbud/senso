@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { dict, type Lang } from "@/lib/i18n";
+import { ACCESSORY_SERIES } from "@/routes/product";
 
 /**
  * Filters are links that set query parameters, not Redux state.
@@ -14,21 +15,25 @@ export default function Filters({
   series,
   active,
   sort,
+  showParts,
 }: {
   lang: Lang;
   series: { id?: number; name: string }[];
   active: string;
   sort: string;
+  showParts?: boolean;
 }) {
   const d = dict(lang);
   const base = lang === "en" ? "/en/hearing-aids" : "/hearing-aids";
 
-  const href = (next: { series?: string; sort?: string }) => {
+  const href = (next: { series?: string; sort?: string; parts?: boolean }) => {
     const params = new URLSearchParams();
     const s = next.series ?? active;
     const o = next.sort ?? sort;
+    const parts = next.parts ?? showParts;
     if (s && s !== "all") params.set("series", s);
-    if (o && o !== "desc") params.set("sort", o);
+    if (o && o !== "asc") params.set("sort", o);
+    if (parts) params.set("parts", "1");
     const qs = params.toString();
     return qs ? `${base}?${qs}` : base;
   };
@@ -57,7 +62,9 @@ export default function Filters({
           <Link href={href({ series: "all" })} className={chip(active === "all")}>
             {d.products.allSeries}
           </Link>
-          {series.map((s) => {
+          {series
+            .filter((s) => !ACCESSORY_SERIES.includes(s.name))
+            .map((s) => {
             const value = String(s.id ?? s.name);
             return (
               <Link
@@ -87,6 +94,16 @@ export default function Filters({
             </Link>
           ))}
         </div>
+      </div>
+      <div>
+        <Link
+          href={href({ parts: !showParts, series: "all" })}
+          className={chip(!!showParts)}
+        >
+          {lang === "bn"
+            ? "ব্যাটারি ও যন্ত্রাংশ"
+            : "Batteries and parts"}
+        </Link>
       </div>
     </div>
   );

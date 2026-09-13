@@ -60,24 +60,81 @@ export async function getProducts(): Promise<ProductMapInterface[]> {
 
 export type SortKey = "best" | "trending" | "leatest" | "asc" | "desc";
 
-/** Server-side equivalent of what List.tsx used to do in a useEffect. */
+/**
+ * Series that are consumables rather than hearing aids.
+ *
+ * The catalogue mixes devices with batteries and spare parts, so anything
+ * that computes "prices from ..." or an AggregateOffer over the whole list
+ * ends up advertising hearing aids from BDT 300 — which is a battery.
+ * ("Hearign Aid Battery" is spelled that way in the CMS.)
+ */
+export const ACCESSORY_SERIES = ["Hearign Aid Battery", "No Series"];
+
+export function isAccessory(p: ProductMapInterface) {
+  return ACCESSORY_SERIES.includes(p.series);
+}
+
+export function priceStats(products: ProductMapInterface[]) {
+  const values = products
+    .filter((p) => !isAccessory(p))
+    .map((p) => parseFloat(p.price))
+    .filter((n) => isFinite(n) && n > 0);
+  if (!values.length) return null;
+  return {
+    low: Math.round(Math.min(...values)),
+    high: Math.round(Math.max(...values)),
+    count: values.length,
+  };
+}
+
+/**
+ * Filtering and sorting happen here, over the full catalogue, rather than
+ * through /products/series.
+ *
+ * That endpoint returns 40 rows where /products/list returns 109, so using
+ * it silently hid roughly two thirds of the catalogue — including whole
+ * series. It also cost a network round trip per filter click. One cached
+ * fetch of the full list and an in-memory filter is both complete and
+ * faster. `best`, `trending` and `latest` are not present on the list
+ * payload, so those three still ask the API.
+ */
 export async function getProductsBySeries(opts: {
   series?: string | number;
   sort?: SortKey;
+  includeAccessories?: boolean;
 }): Promise<ProductMapInterface[]> {
-  const series = opts.series ?? "all";
+  const series = String(opts.series ?? "all");
   const sort = opts.sort ?? "desc";
-  const params = new URLSearchParams({
-    series: String(series),
-    best: String(sort === "best"),
-    leatest: String(sort === "leatest"),
-    trending: String(sort === "trending"),
-    sort: sort === "asc" || sort === "desc" ? sort : "desc",
+
+  if (sort === "best" || sort === "trending" || sort === "leatest") {
+    const params = new URLSearchParams({
+      series,
+      best: String(sort === "best"),
+      leatest: String(sort === "leatest"),
+      trending: String(sort === "trending"),
+      sort: "desc",
+    });
+    const json = await getJson<ApiList>(
+      `${BASE}/api/senso/products/series?${params.toString()}`
+    );
+    return json?.data ?? [];
+  }
+
+  let rows = await getProducts();
+
+  if (!opts.includeAccessories) rows = rows.filter((p) => !isAccessory(p));
+
+  if (series !== "all") {
+    rows = rows.filter(
+      (p) => String(p.series_id) === series || p.series === series
+    );
+  }
+
+  return rows.sort((a, b) => {
+    const x = parseFloat(a.price) || 0;
+    const y = parseFloat(b.price) || 0;
+    return sort === "asc" ? x - y : y - x;
   });
-  const json = await getJson<ApiList>(
-    `${BASE}/api/senso/products/series?${params.toString()}`
-  );
-  return json?.data ?? [];
 }
 
 export interface ProductInterface {

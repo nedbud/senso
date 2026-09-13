@@ -1,4 +1,4 @@
-import { SITE } from "@/lib/site";
+import { SITE, TESTS, TEST_PACKAGE } from "@/lib/site";
 
 /**
  * Structured data. The site had none at all, which meant Google had no
@@ -52,15 +52,37 @@ export function ClinicJsonLd() {
             closes: "20:00",
           },
         ],
+        geo: {
+          "@type": "GeoCoordinates",
+          latitude: SITE.address.geo.lat,
+          longitude: SITE.address.geo.lng,
+        },
+        hasMap: SITE.address.mapsUrl,
+        paymentAccepted: "Cash, Credit Card, Debit Card, bKash, Bangla QR",
         availableService: [
-          { "@type": "MedicalTest", name: "Pure Tone Audiometry (PTA)" },
-          { "@type": "MedicalTest", name: "Tympanometry" },
-          { "@type": "MedicalTest", name: "Speech Audiometry / SRT" },
-          { "@type": "MedicalTest", name: "Otoacoustic Emissions (OAE)" },
-          { "@type": "MedicalTest", name: "BERA / ABR" },
+          {
+            "@type": "MedicalTest",
+            name: "Pure Tone Audiometry (PTA)",
+            offers: { "@type": "Offer", priceCurrency: "BDT", price: String(TESTS[0].fee) },
+          },
+          {
+            "@type": "MedicalTest",
+            name: "Tympanometry",
+            offers: { "@type": "Offer", priceCurrency: "BDT", price: String(TESTS[1].fee) },
+          },
+          {
+            "@type": "MedicalTest",
+            name: "Speech Reception Threshold (SRT)",
+            offers: { "@type": "Offer", priceCurrency: "BDT", price: String(TESTS[2].fee) },
+          },
+          {
+            "@type": "MedicalTest",
+            name: "Full hearing assessment (PTA, tympanometry and speech)",
+            offers: { "@type": "Offer", priceCurrency: "BDT", price: String(TEST_PACKAGE.fee) },
+          },
           { "@type": "Service", name: "Hearing aid fitting and verification" },
           { "@type": "Service", name: "Ear mould making" },
-          { "@type": "Service", name: "Hearing aid repair and servicing" },
+          { "@type": "Service", name: "ReSound hearing aid repair and servicing" },
         ],
       }}
     />
