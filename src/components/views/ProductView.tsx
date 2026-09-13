@@ -627,7 +627,7 @@ export default function ProductView({
               <div className="mt-5 flex flex-wrap gap-2.5">
                 <AskNaatiButton
                   lang={lang}
-                  seed={d.wa.product(device.title)}
+                  seed={fill(d.wa.product, { name: device.title })}
                 />
                 <Link
                   href={clinic.address.mapsUrl}
@@ -994,7 +994,7 @@ export default function ProductView({
               <div className="mt-6 grid max-w-lg gap-2.5 sm:grid-cols-2">
                 <AskNaatiButton
                   lang={lang}
-                  seed={d.wa.product(device.title)}
+                  seed={fill(d.wa.product, { name: device.title })}
                 />
               </div>
             </Post>

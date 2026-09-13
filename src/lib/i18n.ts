@@ -12,6 +12,21 @@
  * word is medically correct and almost nobody searches it.
  */
 
+/**
+ * Every value in the dictionary below is a string, an array or an object of
+ * them — never a function.
+ *
+ * Three entries used to be functions: `hero.openUntil(h)`, `hero.opensAt(day,
+ * h)` and `wa.product(name)`. That was fine while the dictionary never left
+ * the server, and it stopped being fine the moment the pages started handing
+ * `d` to client components — React cannot serialise a function across that
+ * boundary, and the build failed on 232 pages with "Functions cannot be passed
+ * directly to Client Components".
+ *
+ * They are {placeholder} templates now, filled by fill(). Which also means
+ * they can be edited in the CMS like every other string; a function never
+ * could be.
+ */
 export type Lang = "bn" | "en";
 export const LANGS: Lang[] = ["bn", "en"];
 export const DEFAULT_LANG: Lang = "bn";
@@ -53,8 +68,8 @@ export const t = {
         "লিখে পাঠান। আমাদের বেশিরভাগ রোগীর জন্যই ফোন কঠিন — সেজন্যই তো তাঁরা আমাদের কাছে আসেন। হোয়াটসঅ্যাপ, মেসেঞ্জার, অথবা সরাসরি চলে আসুন।",
       openNow: "এখন খোলা",
       closedNow: "এখন বন্ধ",
-      openUntil: (h: string) => `${h} পর্যন্ত খোলা`,
-      opensAt: (day: string, h: string) => `${day} ${h}-এ খুলবে`,
+      openUntil: "{hour} পর্যন্ত খোলা",
+      opensAt: "{day} {hour}-এ খুলবে",
       tomorrow: "আগামীকাল",
       hoursFallback: "শনি – বৃহস্পতি, সকাল ১০টা – রাত ৮টা · শুক্রবার বন্ধ",
     },
@@ -318,7 +333,7 @@ export const t = {
       prescription:
         "প্রেসক্রিপশনের ছবি পাঠাচ্ছি। কোন টেস্ট লাগবে জানাবেন।",
       parts: "মেশিনের ছবি পাঠাচ্ছি। কোন যন্ত্রাংশ লাগবে জানাবেন।",
-      product: (name: string) => `${name} — এই মেশিনটি নিয়ে জানতে চাই।`,
+      product: "{name} — এই মেশিনটি নিয়ে জানতে চাই।",
       general: "আসসালামু আলাইকুম।",
     },
   },
@@ -351,8 +366,8 @@ export const t = {
         "Write to us instead. Most of our patients struggle on the phone — that is usually why they come to us in the first place. WhatsApp, Messenger, or simply walk in.",
       openNow: "Open now",
       closedNow: "Closed now",
-      openUntil: (h: string) => `Open until ${h}`,
-      opensAt: (day: string, h: string) => `Opens ${day} at ${h}`,
+      openUntil: "Open until {hour}",
+      opensAt: "Opens {day} at {hour}",
       tomorrow: "tomorrow",
       hoursFallback: "Saturday – Thursday, 10 AM – 8 PM · Closed Friday",
     },
@@ -585,7 +600,7 @@ export const t = {
         "I am sending a photo of my prescription. Please tell me which tests I need.",
       parts:
         "I am sending a photo of my device. Please tell me which part I need.",
-      product: (name: string) => `I would like to know more about ${name}.`,
+      product: "I would like to know more about {name}.",
       general: "Hello.",
     },
   },

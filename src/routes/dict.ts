@@ -42,6 +42,29 @@ async function fetchCopy(): Promise<Record<string, Entry>> {
 }
 
 /**
+ * Nothing in the dictionary may be a function.
+ *
+ * The pages hand `d` to client components — the sticky contact bar, the
+ * related-devices carousel, the product grid — and React cannot serialise a
+ * function across that boundary. It does not fail at the call site either: it
+ * fails during the static export, on every one of the 232 pages at once, with
+ * an error that names the object and not the file.
+ *
+ * So the rule is enforced where it can be seen. Putting a function back into
+ * src/lib/i18n.ts turns that property into `never` here and this assignment
+ * stops compiling — a typecheck error with the property's name in it, before
+ * anything is built.
+ */
+type Serialisable<T> = T extends (...args: never[]) => unknown
+  ? never
+  : T extends object
+    ? { [K in keyof T]: Serialisable<T[K]> }
+    : T;
+
+const DICTIONARY_HOLDS_NO_FUNCTIONS: Serialisable<Dict> = dict("bn");
+void DICTIONARY_HOLDS_NO_FUNCTIONS;
+
+/**
  * Writes `value` at a dotted path, but only where the code already has a string
  * there.
  *
@@ -69,12 +92,12 @@ function overlay(target: Record<string, unknown>, path: string, value: string): 
 }
 
 /**
- * A mutable deep copy that keeps functions.
+ * A mutable deep copy.
  *
- * Not a JSON round trip: three entries in the dictionary are functions —
- * `common.openUntil(h)`, `common.opensAt(day, h)` and `wa.product(name)` —
- * and JSON.stringify drops them. They would arrive as undefined and throw at
- * the first call site that opens a WhatsApp message or prints closing time.
+ * Written out rather than a JSON round trip because this runs on every page
+ * render and the dictionary is a few hundred short strings — but either would
+ * be correct now. It was not always: three entries used to be functions, and
+ * JSON.stringify drops those.
  */
 function clone<T>(value: T): T {
   if (Array.isArray(value)) return value.map(clone) as unknown as T;
