@@ -5,6 +5,9 @@ import { ClinicJsonLd } from "@/components/ui/JsonLd";
 import StickyContactBar from "@/components/ui/StickyContactBar";
 // import NaatiWidget from "@/components/naati/NaatiWidget";
 import type { Lang } from "@/lib/i18n";
+import { getClinic } from "@/routes/clinic";
+import { getDict } from "@/routes/dict";
+import { getDetails } from "@/routes/details";
 
 /**
  * The document shell, shared by both root layouts.
@@ -26,13 +29,23 @@ import type { Lang } from "@/lib/i18n";
  * than a client transition. For a language switch that is the honest
  * behaviour anyway — the document language really is changing.
  */
-export default function RootShell({
+export default async function RootShell({
   lang,
   children,
 }: {
   lang: Lang;
   children: React.ReactNode;
 }) {
+  // Read once, here, and hand the same record to everything in the shell. The
+  // alternative is each component fetching for itself, which is the same data
+  // four times and four chances for two parts of one page to disagree about
+  // the phone number.
+  const [clinic, d, details] = await Promise.all([
+    getClinic(),
+    getDict(lang),
+    getDetails(),
+  ]);
+
   return (
     <html lang={lang}>
       <head>
@@ -49,10 +62,10 @@ export default function RootShell({
           href="/font/anek-semi-600-bengali.woff2" />
       </head>
       <body suppressHydrationWarning>
-        <ClinicJsonLd />
-        <Navbar lang={lang} />
+        <ClinicJsonLd clinic={clinic} tests={details.tests} />
+        <Navbar lang={lang} d={d} />
         <main>{children}</main>
-        <Footer lang={lang} />
+        <Footer lang={lang} clinic={clinic} d={d} />
         {/*
           Naati is switched off for this release — this line and its import
           above are the whole switch. Nothing else was removed: the widget,
@@ -81,7 +94,7 @@ export default function RootShell({
 
           Mobile only, and only once the hero has scrolled past.
         */}
-        <StickyContactBar lang={lang} />
+        <StickyContactBar lang={lang} clinic={clinic} d={d} />
       </body>
     </html>
   );

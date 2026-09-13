@@ -1,8 +1,11 @@
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { formatTaka, toBengaliDigits, SITE, TEST_PACKAGE } from "@/lib/site";
-import { dict, type Lang } from "@/lib/i18n";
+import { formatTaka, toBengaliDigits } from "@/lib/site";
+import type { Clinic } from "@/routes/clinic";
+import type { Part } from "@/routes/details";
+import { fill, type Lang } from "@/lib/i18n";
+import type { Dict } from "@/routes/dict";
 import {
   toDevice,
   devicesOnly,
@@ -59,17 +62,26 @@ export default function ProductView({
   lang,
   slug,
   copy,
+  clinic,
+  d,
+  parts,
 }: {
   product: Product | null;
   catalogue: ProductMapInterface[];
   lang: Lang;
   slug: string;
   copy: Copy;
+  clinic: Clinic;
+  d: Dict;
+  parts: Part[];
 }) {
   if (!product) notFound();
-  const d = dict(lang);
   const bn = lang === "bn";
   const prefix = lang === "en" ? "/en" : "";
+
+  /** A figure in the reader's own numerals. Used wherever a template has a
+   *  {placeholder} standing in for one. */
+  const num = (v: number | string) => (bn ? toBengaliDigits(v) : String(v));
 
   const T = (key: string, bnText: string, enText: string) =>
     say(copy, key, lang, { bn: bnText, en: enText });
@@ -99,7 +111,7 @@ export default function ProductView({
     product.coverage
   );
 
-  const url = `${SITE.url}${prefix}/hearing-aids/${slug}`;
+  const url = `${clinic.url}${prefix}/hearing-aids/${slug}`;
 
   /**
    * The gallery builds itself.
@@ -243,15 +255,19 @@ export default function ProductView({
     (f) => !singleMic || !DIRECTIONAL.test(f.value)
   );
 
-  const faq = parsedFaq.length ? parsedFaq : productFaq(device, lang);
+  const faq = parsedFaq.length ? parsedFaq : productFaq(device, lang, clinic, d, parts);
   const others = devicesOnly(catalogue);
 
-  const crosShort = bn
-    ? "খারাপ কানে পরার ট্রান্সমিটার"
-    : "Transmitter, worn on the poor ear";
-  const crosLong = bn
-    ? "মূল অংশটা কানের পেছনে বসে, ঠিক সাধারণ RIE-র মতোই — পার্থক্য হলো কানের ভেতরে কোনো স্পিকার নেই। এটি শুধু ওই পাশের শব্দ ধরে বেতারে অন্য কানের হিয়ারিং এইডে পাঠিয়ে দেয়।"
-    : "The body sits behind the ear exactly like an ordinary RIE — the difference is that there is no speaker in the canal. It picks up sound arriving on that side and sends it wirelessly to the hearing aid on your other ear.";
+  const crosShort = T(
+    "device.crosShort",
+    "খারাপ কানে পরার ট্রান্সমিটার",
+    "Transmitter, worn on the poor ear"
+  );
+  const crosLong = T(
+    "device.crosLong",
+    "মূল অংশটা কানের পেছনে বসে, ঠিক সাধারণ RIE-র মতোই — পার্থক্য হলো কানের ভেতরে কোনো স্পিকার নেই। এটি শুধু ওই পাশের শব্দ ধরে বেতারে অন্য কানের হিয়ারিং এইডে পাঠিয়ে দেয়।",
+    "The body sits behind the ear exactly like an ordinary RIE — the difference is that there is no speaker in the canal. It picks up sound arriving on that side and sends it wirelessly to the hearing aid on your other ear."
+  );
 
   const included = TL(
     "price.included",
@@ -259,16 +275,16 @@ export default function ProductView({
       "অডিওলজিস্টের সময় — মেশিন বাছাই ও পরামর্শ",
       "আপনার অডিওগ্রাম অনুযায়ী মেশিন প্রোগ্রাম করা ও যাচাই করা",
       "কানের ছাঁচ অনুযায়ী ইয়ার মোল্ড",
-      `প্রতি ${toBengaliDigits(SITE.warranty.followUpMonths)} মাসে ফলো-আপ ও নতুন করে টিউনিং`,
-      `${toBengaliDigits(SITE.warranty.years)} বছরের ওয়ারেন্টি — যন্ত্রাংশের ওপর ${toBengaliDigits(SITE.warranty.accessoryYears)} বছর`,
+      `প্রতি ${toBengaliDigits(clinic.warranty.followUpMonths)} মাসে ফলো-আপ ও নতুন করে টিউনিং`,
+      `${toBengaliDigits(clinic.warranty.years)} বছরের ওয়ারেন্টি — যন্ত্রাংশের ওপর ${toBengaliDigits(clinic.warranty.accessoryYears)} বছর`,
       "কীভাবে পরবেন, পরিষ্কার করবেন ও যত্ন নেবেন — হাতে-কলমে দেখিয়ে দেওয়া",
     ],
     [
       "The audiologist's time — choosing the device and talking it through",
       "Programming and verification against your own audiogram",
       "An ear mould taken from your ear",
-      `Follow-up and re-tuning every ${SITE.warranty.followUpMonths} months`,
-      `A ${SITE.warranty.years}-year warranty — ${SITE.warranty.accessoryYears} year on accessories`,
+      `Follow-up and re-tuning every ${clinic.warranty.followUpMonths} months`,
+      `A ${clinic.warranty.years}-year warranty — ${clinic.warranty.accessoryYears} year on accessories`,
       "Being shown, in person, how to wear it, clean it and look after it",
     ]
   );
@@ -276,15 +292,15 @@ export default function ProductView({
   const notIncluded = TL(
     "price.excluded",
     [
-      `পূর্ণ কান পরীক্ষার ফি আলাদা — ${formatTaka(TEST_PACKAGE.fee)}, সময় লাগে ${toBengaliDigits(TEST_PACKAGE.minutes)} মিনিট।`,
+      `পূর্ণ কান পরীক্ষার ফি আলাদা — ${formatTaka(clinic.testPackage.fee)}, সময় লাগে ${toBengaliDigits(clinic.testPackage.minutes)} মিনিট।`,
       "কিস্তি বা EMI-এর ব্যবস্থা নেই। নগদ, কার্ড, বিকাশ ও বাংলা QR চলে।",
-      `ভেঙে গেলে, পানিতে ভিজলে বা আগুনে পুড়লে ওয়ারেন্টি প্রযোজ্য নয় — সেক্ষেত্রে দামের ${toBengaliDigits(SITE.warranty.replacementDiscount)}% দিয়ে বদলে নেওয়া যায়।`,
+      `ভেঙে গেলে, পানিতে ভিজলে বা আগুনে পুড়লে ওয়ারেন্টি প্রযোজ্য নয় — সেক্ষেত্রে দামের ${toBengaliDigits(clinic.warranty.replacementDiscount)}% দিয়ে বদলে নেওয়া যায়।`,
       "একবার বিক্রি হয়ে যাওয়া মেশিন ফেরত নেওয়া হয় না। তাই কেনার আগে সেন্টারে বসে শুনে নিন।",
     ],
     [
-      `The full hearing assessment is separate — ${formatTaka(TEST_PACKAGE.fee)}, about ${TEST_PACKAGE.minutes} minutes.`,
+      `The full hearing assessment is separate — ${formatTaka(clinic.testPackage.fee)}, about ${clinic.testPackage.minutes} minutes.`,
       "There is no instalment or EMI scheme. Cash, card, bKash and Bangla QR.",
-      `The warranty does not cover ${SITE.warranty.excluded} — in that case a replacement is ${SITE.warranty.replacementDiscount}% of the price.`,
+      `The warranty does not cover ${clinic.warranty.excluded} — in that case a replacement is ${clinic.warranty.replacementDiscount}% of the price.`,
       "Once sold, a device is not taken back. So try it in the centre before you decide.",
     ]
   );
@@ -306,8 +322,8 @@ export default function ProductView({
     isCros
       ? {
           label: T("stat.for", "কার জন্য", "For"),
-          value: bn ? "এক কানে শোনা যায় না" : "Single-sided loss",
-          note: bn ? "শব্দ পাঠিয়ে দেয়" : "routes sound across",
+          value: T("device.singleSided", "এক কানে শোনা যায় না", "Single-sided loss"),
+          note: T("device.routesSound", "শব্দ পাঠিয়ে দেয়", "routes sound across"),
         }
       : {
           label: T("stat.range", "কতটুকু কম শোনার জন্য", "Fitting range"),
@@ -322,15 +338,15 @@ export default function ProductView({
       ? {
           label: T("stat.channels", "চ্যানেল", "Channels"),
           value: bn ? toBengaliDigits(device.channels) : String(device.channels),
-          note: bn ? "শব্দ ভাগ করে সামলায়" : "bands of processing",
+          note: T("device.channelsNote", "শব্দ ভাগ করে সামলায়", "bands of processing"),
         }
       : null,
     {
       label: T("spec.warranty", "ওয়ারেন্টি", "Warranty"),
-      value: bn
-        ? `${toBengaliDigits(SITE.warranty.years)} বছর`
-        : `${SITE.warranty.years} years`,
-      note: bn ? "সেনসোর নিজস্ব সার্ভিস" : "serviced in our own centre",
+      value: fill(T("device.warrantyYears", "{years} বছর", "{years} years"), {
+        years: num(clinic.warranty.years),
+      }),
+      note: T("device.ownService", "সেনসোর নিজস্ব সার্ভিস", "serviced in our own centre"),
     },
   ].filter(Boolean) as { label: string; value: string; note: string }[];
 
@@ -353,13 +369,16 @@ export default function ProductView({
     {
       label: T("spec.fitting_range", "কতটুকু কম শোনার জন্য", "Fitting range"),
       value: isCros
-        ? bn
-          ? "প্রযোজ্য নয় — শব্দ পাঠিয়ে দেয়"
-          : "Not applicable — it transmits sound"
+        ? T(
+            "device.notApplicable",
+            "প্রযোজ্য নয় — শব্দ পাঠিয়ে দেয়",
+            "Not applicable — it transmits sound"
+          )
         : device.fittingRange
-        ? bn
-          ? `${toBengaliDigits(device.fittingRange.from)}–${toBengaliDigits(device.fittingRange.to)} ডেসিবেল`
-          : `${device.fittingRange.from}–${device.fittingRange.to} dB HL`
+        ? fill(T("device.fittingRange", "{from}–{to} ডেসিবেল", "{from}–{to} dB HL"), {
+            from: num(device.fittingRange.from),
+            to: num(device.fittingRange.to),
+          })
         : lossRangeLabel(device, lang),
     },
     ...(device.rechargeable !== undefined
@@ -367,12 +386,12 @@ export default function ProductView({
           {
             label: T("spec.power", "শক্তি", "Power"),
             value: device.rechargeable
-              ? bn
-                ? "রিচার্জেবল, চার্জারসহ"
-                : "Rechargeable, charger included"
-              : bn
-              ? "ব্যাটারিতে চলে"
-              : "Disposable battery",
+              ? T(
+                  "device.rechargeable",
+                  "রিচার্জেবল, চার্জারসহ",
+                  "Rechargeable, charger included"
+                )
+              : T("device.disposable", "ব্যাটারিতে চলে", "Disposable battery"),
           },
         ]
       : []),
@@ -475,9 +494,7 @@ export default function ProductView({
     </section>
   );
 
-  const postedBy = bn
-    ? "সেনসো হিয়ারিং সেন্টার"
-    : "Senso Hearing Centre";
+  const postedBy = bn ? clinic.nameBn : clinic.name;
 
   return (
     <article className="bg-paper-2 pb-16">
@@ -496,10 +513,10 @@ export default function ProductView({
       <FaqJsonLd items={faq} />
       <BreadcrumbJsonLd
         items={[
-          { name: T("nav.home", "হোম", "Home"), url: `${SITE.url}${prefix || "/"}` },
+          { name: T("nav.home", "হোম", "Home"), url: `${clinic.url}${prefix || "/"}` },
           {
             name: T("nav.hearing_aids", "কানের মেশিন", "Hearing aids"),
-            url: `${SITE.url}${prefix}/hearing-aids`,
+            url: `${clinic.url}${prefix}/hearing-aids`,
           },
           { name: device.title, url },
         ]}
@@ -535,7 +552,7 @@ export default function ProductView({
                   href={coverHref}
                   target={coverHref?.startsWith("#") ? undefined : "_blank"}
                   rel={coverHref?.startsWith("#") ? undefined : "noopener"}
-                  aria-label={bn ? "ভিডিওটি দেখুন" : "Watch the video"}
+                  aria-label={T("device.watchVideo", "ভিডিওটি দেখুন", "Watch the video")}
                   className="group absolute inset-0 flex items-center justify-center"
                 >
                   <span className="flex h-14 w-14 items-center justify-center rounded-full bg-white/90 pl-1 text-lg text-ink shadow-xl transition group-hover:scale-110">
@@ -613,7 +630,7 @@ export default function ProductView({
                   seed={d.wa.product(device.title)}
                 />
                 <Link
-                  href={SITE.address.mapsUrl}
+                  href={clinic.address.mapsUrl}
                   target="_blank"
                   rel="noopener"
                   className="inline-flex items-center rounded-xl border border-line-strong px-4 py-2.5 font-ui text-sm font-medium text-ink-2 transition hover:border-ink-muted hover:text-ink"
@@ -663,7 +680,7 @@ export default function ProductView({
       </header>
 
       {/* ── The pictures ───────────────────────────────────────────── */}
-      <ProductGallery shots={gallery} lang={lang} title={device.title} />
+      <ProductGallery d={d} shots={gallery} lang={lang} title={device.title} />
 
       {/* ── The two columns ────────────────────────────────────────── */}
       <div className="mx-auto max-w-6xl px-4 pt-6 lg:px-8">
@@ -704,9 +721,16 @@ export default function ProductView({
 
             <Box title={T("product.centre.title", "কোথায় পাবেন", "Where to find us")}>
               <p className="text-sm leading-relaxed text-ink-2">
-                {T("business.address.line", SITE.address.lineBn, SITE.address.line)}
+                {/* The address itself, not a copy of it. These were two
+                    site_copy keys whose fallback was the clinic record — which
+                    meant a row nobody had filled in shadowed the address the
+                    Company profile screen holds, and the page could print a
+                    stale address while the footer printed the current one. */}
+                {bn ? clinic.address.lineBn : clinic.address.line}
                 <br />
-                {T("business.address.city", SITE.address.cityBn, SITE.address.city)}
+                {bn
+                  ? `${clinic.address.cityBn}-${clinic.address.postcode}`
+                  : `${clinic.address.city}-${clinic.address.postcode}`}
               </p>
               <p className="mt-3 text-sm leading-relaxed text-ink-muted">
                 {T("business.hours.open", "শনি – বৃহস্পতি: সকাল ১০টা – রাত ৮টা", "Saturday to Thursday, 10am to 8pm")}
@@ -714,7 +738,7 @@ export default function ProductView({
                 {T("business.hours.closed", "শুক্রবার বন্ধ", "Closed on Friday")}
               </p>
               <Link
-                href={SITE.address.mapsUrl}
+                href={clinic.address.mapsUrl}
                 target="_blank"
                 rel="noopener"
                 className="mt-4 inline-block font-ui text-sm font-medium text-brand hover:underline"
@@ -742,12 +766,20 @@ export default function ProductView({
                 </p>
 
                 <div className="mt-6 rounded-xl border border-line bg-paper-2 p-5">
-                  <LossScale device={device} lang={lang} />
+                  <LossScale device={device} lang={lang} d={d} />
                   {device.fittingRange && (
                     <p className="num mt-5 border-t border-line pt-4 text-sm text-ink-muted">
-                      {bn
-                        ? `ফিটিং রেঞ্জ: ${toBengaliDigits(device.fittingRange.from)}–${toBengaliDigits(device.fittingRange.to)} ডেসিবেল`
-                        : `Fitting range: ${device.fittingRange.from}–${device.fittingRange.to} dB HL`}
+                      {fill(
+                        T(
+                          "device.fittingRangeLine",
+                          "ফিটিং রেঞ্জ: {from}–{to} ডেসিবেল",
+                          "Fitting range: {from}–{to} dB HL"
+                        ),
+                        {
+                          from: num(device.fittingRange.from),
+                          to: num(device.fittingRange.to),
+                        }
+                      )}
                       {" · "}
                       {T(
                         "spec.fitting_range.note",
@@ -785,10 +817,16 @@ export default function ProductView({
                     )}
                   </p>
                   <p className="mt-3 text-sm leading-relaxed text-ink-inverse/70">
-                    {T(
-                      "loss.test_note",
-                      `পূর্ণ কান পরীক্ষা ${toBengaliDigits(TEST_PACKAGE.minutes)} মিনিট, ফি ${formatTaka(TEST_PACKAGE.fee)}।`,
-                      `The full assessment takes ${TEST_PACKAGE.minutes} minutes and costs ${formatTaka(TEST_PACKAGE.fee)}.`
+                    {fill(
+                      T(
+                        "loss.test_note",
+                        "পূর্ণ কান পরীক্ষা {minutes} মিনিট, ফি {fee}।",
+                        "The full assessment takes {minutes} minutes and costs {fee}."
+                      ),
+                      {
+                        minutes: num(clinic.testPackage.minutes),
+                        fee: formatTaka(clinic.testPackage.fee),
+                      }
                     )}
                   </p>
                 </div>
@@ -848,7 +886,7 @@ export default function ProductView({
                       rel="noopener"
                       className={`${block.content || block.image ? "mt-5" : ""} inline-flex font-ui text-sm font-medium text-brand hover:underline`}
                     >
-                      {bn ? "ভিডিওটি দেখুন" : "Watch the video"} →
+                      {T("device.watchVideo", "ভিডিওটি দেখুন", "Watch the video")} →
                     </a>
                   ) : null}
                 </Post>
@@ -934,7 +972,7 @@ export default function ProductView({
 
             {/* Nearby devices. */}
             <div className="overflow-hidden rounded-2xl border border-line bg-paper-surface">
-              <RelatedDevices current={device} all={others} lang={lang} />
+              <RelatedDevices current={device} all={others} lang={lang} dict={d} />
             </div>
 
             {/* The close. */}

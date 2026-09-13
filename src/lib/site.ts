@@ -17,7 +17,22 @@
 export const SITE = {
   name: "Senso Hearing Centre",
   nameBn: "সেনসো হিয়ারিং সেন্টার",
-  url: "https://www.sensohearingdhaka.com",
+  /**
+   * No www.
+   *
+   * Every canonical, every sitemap entry, every og:url and the @id on the
+   * structured data is built from this one line, so it has to be the URL the
+   * server actually serves — and nginx answers on the bare domain and sends
+   * www there with a 301. Declaring a canonical that is itself a redirect is
+   * sloppy at best.
+   *
+   * The deciding evidence was Facebook's own scraper: it reports 2,379 likes,
+   * shares and comments against https://sensohearingdhaka.com/ and nothing
+   * against the www form. Those counts are tied to the exact URL. Moving the
+   * site to www would not carry them across — it would start the count at
+   * zero and throw away years of sharing.
+   */
+  url: "https://sensohearingdhaka.com",
 
   address: {
     line: "57/9, Artisan Center (4th floor), Panthapath Signal",
@@ -105,6 +120,17 @@ export const SITE = {
     banglaQr: true,
     emi: false, // explicitly "নেই" on the form — do not advertise instalments
     tradeIn: false,
+  },
+
+  /** The year on the sign in Panthapath. The number band prints it. */
+  foundedYear: 2007,
+
+  /** All three tests together — the usual adult assessment. Kept beside the
+   *  warranty rather than in TEST_PACKAGE because the hero paragraph, the
+   *  number band and the fee table all quote it, and they must not drift. */
+  testPackage: {
+    fee: 1600,
+    minutes: 35,
   },
 
   warranty: {
@@ -197,11 +223,37 @@ export type OpenState = {
   nextOpensAt?: number;
 };
 
-export function getOpenState(now: Date = new Date()): OpenState {
+/**
+ * A span per weekday, or null for a day the centre is shut.
+ *
+ * `readonly number[]` rather than a two-element tuple because these arrive
+ * from the CMS as well as from the constant below, and a JSON array cannot
+ * promise its own length. The guard in getOpenState does that instead.
+ */
+export type Hours = Readonly<Record<number, readonly number[] | null>>;
+
+/**
+ * Whether the centre is open at this moment, and when it next opens.
+ *
+ * The opening hours are a parameter rather than a constant read from inside.
+ * They come from the Company Profile screen now, and a function that reached
+ * for SITE.hours regardless would have gone on saying "open until 8 PM" after
+ * somebody changed the closing time in the panel — quietly, on the one line on
+ * the page a visitor acts on immediately.
+ */
+export function getOpenState(
+  hours: Hours = SITE.hours,
+  now: Date = new Date()
+): OpenState {
   const dhaka = new Date(now.toLocaleString("en-US", { timeZone: "Asia/Dhaka" }));
   const day = dhaka.getDay();
   const hour = dhaka.getHours() + dhaka.getMinutes() / 60;
-  const span = SITE.hours[day];
+  const open = (day: number): readonly number[] | null => {
+    const span = hours[day];
+    return span && span.length >= 2 ? span : null;
+  };
+
+  const span = open(day);
 
   if (span && hour >= span[0] && hour < span[1]) {
     return { isOpen: true, closesAt: span[1] };
@@ -209,7 +261,7 @@ export function getOpenState(now: Date = new Date()): OpenState {
   let d = day;
   for (let step = 0; step < 8; step++) {
     if (step > 0 || !span || hour >= span[1]) d = (d + 1) % 7;
-    const next = SITE.hours[d];
+    const next = open(d);
     if (next) return { isOpen: false, nextDay: d, nextOpensAt: next[0] };
   }
   return { isOpen: false };

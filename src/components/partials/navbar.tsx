@@ -1,11 +1,15 @@
 import Link from "next/link";
 import Image from "next/image";
-import { dict, type Lang } from "@/lib/i18n";
+import type { Lang } from "@/lib/i18n";
+import type { Dict } from "@/routes/dict";
 import LangSwitch from "@/components/ui/LangSwitch";
 import AskNaatiButton from "@/components/naati/AskNaatiButton";
 
-export default function Navbar({ lang }: { lang: Lang }) {
-  const d = dict(lang);
+export default function Navbar({ lang,
+  d,
+}: { lang: Lang;
+  d: Dict;
+}) {
   const p = (path: string) => (lang === "en" ? `/en${path === "/" ? "" : path}` : path);
 
   const nav = [

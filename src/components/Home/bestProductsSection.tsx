@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { dict, type Lang } from "@/lib/i18n";
+import type { Lang } from "@/lib/i18n";
+import type { Dict } from "@/routes/dict";
 import type { ProductMapInterface } from "@/routes/product";
 import ProductCard from "./Card__bestProducts";
 
@@ -13,11 +14,12 @@ import ProductCard from "./Card__bestProducts";
 export default function BestProducts({
   products,
   lang,
+  d,
 }: {
   products: ProductMapInterface[];
   lang: Lang;
+  d: Dict;
 }) {
-  const d = dict(lang);
   if (!products.length) return null;
 
 
@@ -33,7 +35,7 @@ export default function BestProducts({
 
       <div className="grid grid-cols-2 gap-4 md:grid-cols-3">
         {products.map((product) => (
-          <ProductCard key={product.slug} item={product} lang={lang} />
+          <ProductCard key={product.slug} item={product} lang={lang} dict={d} />
         ))}
       </div>
 

@@ -1,5 +1,8 @@
-import { SITE, TESTS, TEST_PACKAGE, PARTS, formatTaka, toBengaliDigits } from "@/lib/site";
-import { type Lang } from "@/lib/i18n";
+import { formatTaka, toBengaliDigits } from "@/lib/site";
+import { fill, type Lang } from "@/lib/i18n";
+import type { Dict } from "@/routes/dict";
+import type { Clinic } from "@/routes/clinic";
+import { say, type Part, type Test } from "@/routes/details";
 import AskNaatiButton from "@/components/naati/AskNaatiButton";
 
 /**
@@ -11,93 +14,115 @@ import AskNaatiButton from "@/components/naati/AskNaatiButton";
  * intent searches in the category — people arrive holding a prescription
  * and search the test by name.
  *
+ * Which is exactly why none of these numbers is written here any more. A
+ * published fee that has gone stale is worse than an unpublished one: the
+ * visitor arrives expecting ৳ 1,600 and is asked for ৳ 1,800, and the one
+ * thing the page was built to earn is what it loses.
+ *
  * Parts are one line rather than a second table. The demand is real but it
  * is a returning customer's errand, not something a first-time visitor
- * needs to read past.
+ * needs to read past — so the line names the first two and stops.
  */
-
-const COPY: Record<string, Record<Lang, string>> = {
-  pta: { bn: "PTA — কোন কোন শব্দ কম শুনছেন", en: "PTA — which sounds you are missing" },
-  tympanometry: { bn: "Tympanometry — কানের পর্দা ও মধ্যকর্ণ", en: "Tympanometry — eardrum and middle ear" },
-  srt: { bn: "Speech / SRT — কথা কতটুকু বোঝেন", en: "Speech / SRT — how much speech you make out" },
-};
-
-export default function TestsSection({ lang }: { lang: Lang }) {
+export default function TestsSection({
+  lang,
+  clinic,
+  d,
+  tests,
+  parts,
+}: {
+  lang: Lang;
+  clinic: Clinic;
+  d: Dict;
+  tests: Test[];
+  parts: Part[];
+}) {
   const bn = lang === "bn";
-  const mins = (n: number) => (bn ? `${toBengaliDigits(n)} মিনিট` : `${n} min`);
-  const battery = PARTS.find((p) => p.id === "battery")!;
-  const mould = PARTS.find((p) => p.id === "earmould")!;
+  const num = (v: number) => (bn ? toBengaliDigits(v) : String(v));
+  const mins = (n: number) => fill(d.tests.minutes, { n: num(n) });
+
+  // The lowest age any listed test is done at. Printed as the floor for the
+  // whole table, which is what the note underneath it says.
+  const minAge = tests.length
+    ? Math.min(...tests.map((test) => test.minAge).filter((age) => age > 0))
+    : 0;
+
+  const packageMinutes =
+    clinic.testPackage.minutes ||
+    tests.reduce((total, test) => total + (test.minutes ?? 0), 0);
+
+  // Two parts on one line, with their units in brackets. Fewer than two and
+  // the sentence simply has fewer clauses rather than an empty bracket.
+  const priced = parts
+    .slice(0, 2)
+    .map((part) => {
+      const unit = say(part.unit, lang);
+      return `${say(part.name, lang)} ${formatTaka(part.price)}${unit ? ` (${unit})` : ""}`;
+    })
+    .join(", ");
 
   return (
     <section id="tests" className="mx-auto max-w-3xl px-4 py-10 lg:px-8">
       <h2 className="text-xl font-bold tracking-tightest text-ink">
-        {bn ? "পরীক্ষার ফি ও সময়" : "Test fees and how long they take"}
+        {d.tests.heading}
       </h2>
-      <p className="mt-3 max-w-prose text-base text-ink-2">
-        {bn
-          ? "প্রেসক্রিপশন না থাকলেও চলবে — অডিওলজিস্ট দেখে বলে দেবেন কোনটা লাগবে।"
-          : "You do not need a prescription — the audiologist will tell you which test you need."}
-      </p>
+      <p className="mt-3 max-w-prose text-base text-ink-2">{d.tests.lede}</p>
 
       <ul className="mt-6 overflow-hidden rounded-2xl border border-line bg-paper-surface">
-        {TESTS.map((test) => (
+        {tests.map((test, index) => (
           <li
-            key={test.id}
+            key={`${say(test.name, lang)}-${index}`}
             className="flex items-baseline justify-between gap-4 border-b border-line px-5 py-3.5"
           >
-            <span className="text-base text-ink-2">{COPY[test.id][lang]}</span>
+            <span className="text-base text-ink-2">{say(test.name, lang)}</span>
             <span className="num shrink-0 font-ui text-base font-semibold text-ink">
               {formatTaka(test.fee)}
             </span>
           </li>
         ))}
-        <li className="flex items-baseline justify-between gap-4 bg-brand-tint px-5 py-4">
-          <span className="font-ui text-base font-semibold text-ink">
-            {bn ? "তিনটি একসাথে" : "All three together"}
-            <span className="num ml-2 font-sans text-sm font-normal text-ink-muted">
-              {mins(TEST_PACKAGE.minutes)}
+
+        {/* The package line only makes a claim when there is more than one
+            test above it to be a package OF. */}
+        {tests.length > 1 && (
+          <li className="flex items-baseline justify-between gap-4 bg-brand-tint px-5 py-4">
+            <span className="font-ui text-base font-semibold text-ink">
+              {d.tests.allThree}
+              <span className="num ml-2 font-sans text-sm font-normal text-ink-muted">
+                {mins(packageMinutes)}
+              </span>
             </span>
-          </span>
-          <span className="num shrink-0 font-ui text-xl font-bold text-brand">
-            {formatTaka(TEST_PACKAGE.fee)}
-          </span>
-        </li>
+            <span className="num shrink-0 font-ui text-xl font-bold text-brand">
+              {formatTaka(clinic.testPackage.fee)}
+            </span>
+          </li>
+        )}
       </ul>
 
-      <p className="mt-3 text-sm text-ink-muted">
-        {bn
-          ? `রিপোর্ট কিছুক্ষণের মধ্যেই। ${toBengaliDigits(TESTS[0].minAge)} বছরের বেশি বয়সীদের জন্য — ছোট শিশুদের জন্য আলাদা ব্যবস্থা আছে।`
-          : `Report within minutes. For ages ${TESTS[0].minAge} and up — there is a separate arrangement for younger children.`}
-      </p>
+      {minAge > 0 && (
+        <p className="mt-3 text-sm text-ink-muted">
+          {fill(d.tests.reportNote, { age: num(minAge) })}
+        </p>
+      )}
 
       <div className="mt-6">
         <AskNaatiButton
           lang={lang}
-          seed={
-            bn
-              ? "প্রেসক্রিপশনের ছবি পাঠাচ্ছি। কোন টেস্ট লাগবে জানাবেন।"
-              : "I am sending a photo of my prescription. Please tell me which tests I need."
-          }
-          label={bn ? "প্রেসক্রিপশন দেখান" : "Show your prescription"}
+          seed={d.wa.prescription}
+          label={d.tests.prescriptionCta}
         />
       </div>
 
       <p className="mt-8 border-t border-line pt-6 text-base text-ink-2">
-        {bn ? (
-          <>
-            <strong className="font-semibold text-ink">সার্ভিস ও যন্ত্রাংশ —</strong>{" "}
-            ব্যাটারি {formatTaka(battery.price)} (এক পাতা), ইয়ার মোল্ড{" "}
-            {formatTaka(mould.price)}। ReSound মেশিন বিদেশ থেকে কেনা হলেও সার্ভিস
-            করি, নিজস্ব ল্যাবে সাধারণত ১ দিনে। যন্ত্রাংশ কুরিয়ারে পাঠানো যায়।
-          </>
-        ) : (
-          <>
-            <strong className="font-semibold text-ink">Service and parts —</strong>{" "}
-            batteries {formatTaka(battery.price)} a strip, ear moulds{" "}
-            {formatTaka(mould.price)}. We service ReSound devices even if bought
-            abroad, usually within a day in our own lab. Parts can be couriered.
-          </>
+        <strong className="font-semibold text-ink">{d.tests.serviceLead}</strong>{" "}
+        {priced && (
+          <span className="num">
+            {priced}
+            {bn ? "। " : ". "}
+          </span>
         )}
+        {fill(d.tests.serviceNote, {
+          brand: clinic.dealer.brand,
+          days: num(clinic.service.inHouseDays),
+        })}
       </p>
     </section>
   );

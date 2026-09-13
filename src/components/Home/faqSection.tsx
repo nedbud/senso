@@ -1,16 +1,19 @@
-import { dict, type Lang } from "@/lib/i18n";
-import { FAQ } from "@/lib/faq";
+import type { Lang } from "@/lib/i18n";
+import type { Dict } from "@/routes/dict";
+import type { FaqItem } from "@/lib/faq";
 
+// The questions arrive as a prop. The page that renders this already fetches
+// them for its structured data, and a second read here would be the same
+// request twice with a chance of the two disagreeing.
 export default function FaqSection({
   lang,
-  limit,
+  items,
+  d,
 }: {
   lang: Lang;
-  limit?: number;
+  items: FaqItem[];
+  d: Dict;
 }) {
-  const d = dict(lang);
-  const items = limit ? FAQ[lang].slice(0, limit) : FAQ[lang];
-
   return (
     <section id="faq" className="mx-auto max-w-3xl px-4 py-10 lg:px-8">
       <h2 className="mb-6 text-xl font-bold tracking-tightest text-ink">

@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import RootShell from "../RootShell";
 import { SITE, altLanguages } from "@/lib/site";
+import { getClinic } from "@/routes/clinic";
+import { getDict } from "@/routes/dict";
 
 /**
  * Root layout for the English subtree, everything under /en.
@@ -11,41 +13,52 @@ import { SITE, altLanguages } from "@/lib/site";
  * shared layout, which had no reliable way to know it was serving English.
  * Now it does, because the folder it lives in says so.
  */
-export const metadata: Metadata = {
-  metadataBase: new URL(SITE.url),
-  title: {
-    default: "Hearing aid prices and hearing tests — Senso Hearing Centre, Panthapath",
-    template: "%s | Senso Hearing Centre",
-  },
-  description:
-    "Panthapath, Dhaka. Authorised ReSound dealer. Prices published openly; hearing test report the same day, in 35 minutes.",
-  alternates: {
-    canonical: "/en",
-    languages: altLanguages("/", "/en"),
-  },
-  openGraph: {
-    type: "website",
-    locale: "en_US",
-    alternateLocale: ["bn_BD"],
-    siteName: SITE.name,
-    url: `${SITE.url}/en`,
-    title: "Hearing aid prices and hearing tests — Senso Hearing Centre",
-    description:
-      "Prices published openly. A full hearing test takes 35 minutes and the report is yours the same day. Authorised ReSound dealer.",
+
+export async function generateMetadata(): Promise<Metadata> {
+  const [clinic, d] = await Promise.all([getClinic(), getDict("en")]);
+
+  return {
+    metadataBase: new URL(clinic.url || SITE.url),
+    title: {
+      default: d.seo.defaultTitle,
+      // The brand half of every page title. Left as the clinic's own name
+      // rather than a string, so renaming the business renames the tabs.
+      template: `%s | ${clinic.name}`,
+    },
+    description: d.seo.defaultDescription,
+    // The keywords meta tag was removed. It held ~46 entries including
+    // "what is a hearing aids hearing aids hearing aids". Google has ignored
+    // this tag since 2009; all it did was look like keyword stuffing.
+    alternates: {
+      canonical: "/en",
+      languages: altLanguages("/", "/en"),
+    },
+    openGraph: {
+      type: "website",
+      locale: "en_US",
+      alternateLocale: ["bn_BD"],
+      siteName: clinic.name,
+      url: `${clinic.url || SITE.url}/en`,
+      title: d.seo.ogTitle,
+      description: d.seo.ogDescription,
+      // There was no image, and twitter.card was already summary_large_image —
+      // so a share on WhatsApp, Messenger or Facebook, which is where most of
+      // this site's traffic starts, rendered as a grey box with a URL under it.
       images: [
-      {
-        url: "/og.png",
-        width: 1200,
-        height: 630,
-        alt: "Senso Hearing Centre, Panthapath — ২০০৭ সাল থেকে ২০ হাজার রোগীর সেবায়",
-      },
-    ],
-},
-  twitter: { card: "summary_large_image" },
-  icons: { icon: "/favicon.ico", shortcut: "/favicon.ico", apple: "/favicon.ico" },
-  manifest: "/manifest.webmanifest",
-  category: "Hearing care",
-};
+        {
+          url: "/og.png",
+          width: 1200,
+          height: 630,
+          alt: d.seo.ogImageAlt,
+        },
+      ],
+    },
+    twitter: { card: "summary_large_image" },
+    icons: { icon: "/favicon.ico", shortcut: "/favicon.ico", apple: "/favicon.ico" },
+    manifest: "/manifest.webmanifest",
+    category: "Hearing care",
+  };
+}
 
 export default function EnglishRootLayout({
   children,

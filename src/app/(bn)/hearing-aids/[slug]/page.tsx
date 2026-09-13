@@ -2,7 +2,11 @@ import type { Metadata } from "next";
 import ProductView from "@/components/views/ProductView";
 import { getProduct, getProducts, getProductsOrFail } from "@/routes/product";
 import { getCopy } from "@/routes/siteCopy";
+import { getClinic } from "@/routes/clinic";
+import { getDict } from "@/routes/dict";
+import { getDetails } from "@/routes/details";
 import { formatTaka, altLanguages } from "@/lib/site";
+import { fill } from "@/lib/i18n";
 
 export const revalidate = 3600;
 
@@ -14,7 +18,7 @@ export async function generateStaticParams() {
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const res = await getProduct(params.slug);
+  const [res, d] = await Promise.all([getProduct(params.slug), getDict("bn")]);
   const product = res?.data;
   if (!product) return { title: "Not found" };
 
@@ -30,7 +34,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     title: `${display} — ${formatTaka(product.price)}`,
     description:
       product.description?.slice(0, 300) ||
-      `${display}. ReSound কানের মেশিন, দাম ${formatTaka(product.price)}। সেনসো হিয়ারিং সেন্টার, পান্থপথ, ঢাকা।`,
+      fill(d.seo.productDescription, {
+        name: display,
+        price: formatTaka(product.price),
+      }),
     alternates: {
       canonical: `/hearing-aids/${params.slug}`,
       languages: altLanguages(
@@ -51,18 +58,24 @@ export default async function Page({ params }: Props) {
   // The product page shows nearby devices, so it needs the catalogue as
   // well as the product. Both fetches are revalidated hourly and the list
   // is the same one every other page asks for, so this is one cache read.
-  const [res, catalogue, copy] = await Promise.all([
+  const [res, catalogue, copy, clinic, d, details] = await Promise.all([
     getProduct(params.slug),
     getProducts(),
     getCopy(),
+    getClinic(),
+    getDict("bn"),
+    getDetails(),
   ]);
   return (
     <ProductView
+      clinic={clinic}
+      d={d}
       product={res?.data ?? null}
       catalogue={catalogue}
       lang="bn"
       slug={params.slug}
       copy={copy}
+      parts={details.parts}
     />
   );
 }

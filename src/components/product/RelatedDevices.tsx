@@ -6,6 +6,7 @@ import Image from "next/image";
 import { formatTaka } from "@/lib/site";
 import { lossRangeLabel, type Device } from "@/lib/catalogue";
 import type { Lang } from "@/lib/i18n";
+import type { Dict } from "@/routes/dict";
 
 /**
  * Other devices worth looking at, as a carousel.
@@ -32,10 +33,14 @@ export default function RelatedDevices({
   current,
   all,
   lang,
+  // Named `dict` rather than `d` because every card in the track is already a
+  // `d`: this component maps over devices called d.
+  dict,
 }: {
   current: Device;
   all: Device[];
   lang: Lang;
+  dict: Dict;
 }) {
   const pool = all.filter((d) => d.slug !== current.slug);
   const distance = (d: Device) => Math.abs(d.priceValue - current.priceValue);
@@ -137,12 +142,10 @@ export default function RelatedDevices({
       <div className="flex flex-wrap items-end justify-between gap-4 px-5 sm:px-7">
         <div>
           <h2 className="font-ui text-lg font-semibold leading-tight text-ink">
-            {bn ? "পাশাপাশি দেখে নিন" : "Worth comparing"}
+            {dict.related.heading}
           </h2>
           <p className="mt-1 max-w-prose text-sm leading-relaxed text-ink-muted">
-            {bn
-              ? "দামে ও ক্ষমতায় এর কাছাকাছি মডেলগুলো। কোনটা আপনার লাগবে, সেটা অডিওগ্রাম দেখে ঠিক হবে।"
-              : "The models closest to this one in price and capability. Which one you need is settled by the audiogram."}
+            {dict.related.lede}
           </p>
         </div>
 
@@ -151,7 +154,7 @@ export default function RelatedDevices({
         <div className="hidden shrink-0 gap-1.5 sm:flex">
           <button
             type="button"
-            aria-label={bn ? "আগের" : "Previous"}
+            aria-label={dict.pager.previous}
             disabled={atStart}
             onClick={() => {
               stop();
@@ -163,7 +166,7 @@ export default function RelatedDevices({
           </button>
           <button
             type="button"
-            aria-label={bn ? "পরের" : "Next"}
+            aria-label={dict.pager.next}
             disabled={atEnd}
             onClick={() => {
               stop();
@@ -216,7 +219,7 @@ export default function RelatedDevices({
                 </p>
                 <p className="mt-1 text-xs leading-snug text-ink-2">
                   {lossRangeLabel(d, lang)}
-                  {bn ? " শ্রবণক্ষয়ের জন্য" : " loss"}
+                  {dict.catalogue.lossSuffix}
                 </p>
                 <p className="num mt-auto pt-3 font-ui text-lg font-bold text-ink">
                   {formatTaka(d.priceValue)}

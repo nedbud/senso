@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { dict, type Lang } from "@/lib/i18n";
+import type { Lang } from "@/lib/i18n";
+import type { Dict } from "@/routes/dict";
 import { ACCESSORY_SERIES } from "@/routes/product";
 import { listHref, type ListState } from "@/lib/listUrl";
 import { formatTaka } from "@/lib/site";
@@ -21,6 +22,7 @@ import { formatTaka } from "@/lib/site";
  */
 export default function FilterBar({
   lang,
+  d,
   series,
   state,
   total,
@@ -28,13 +30,13 @@ export default function FilterBar({
   high,
 }: {
   lang: Lang;
+  d: Dict;
   series: { id?: number; name: string }[];
   state: ListState;
   total: number;
   low?: number;
   high?: number;
 }) {
-  const d = dict(lang);
   const bn = lang === "bn";
 
   const chip = (isActive: boolean) =>
@@ -44,11 +46,11 @@ export default function FilterBar({
         : "border-line-strong bg-paper-surface text-ink hover:border-ink-2"
     }`;
 
-  const sorts: { key: string; label: Record<Lang, string> }[] = [
-    { key: "asc", label: { bn: "কম দাম আগে", en: "Price: low to high" } },
-    { key: "desc", label: { bn: "বেশি দাম আগে", en: "Price: high to low" } },
-    { key: "best", label: { bn: "বেশি বিক্রি", en: "Best selling" } },
-    { key: "leatest", label: { bn: "নতুন", en: "Latest" } },
+  const sorts: { key: string; label: string }[] = [
+    { key: "asc", label: d.catalogue.sortLowToHigh },
+    { key: "desc", label: d.catalogue.sortHighToLow },
+    { key: "best", label: d.catalogue.sortBest },
+    { key: "leatest", label: d.catalogue.sortLatest },
   ];
   const activeSort = sorts.find((s) => s.key === state.sort) ?? sorts[0];
 
@@ -92,14 +94,14 @@ export default function FilterBar({
           href={listHref(lang, state, { parts: !state.parts, series: "all" })}
           className={chip(state.parts)}
         >
-          {bn ? "ব্যাটারি ও যন্ত্রাংশ" : "Batteries and parts"}
+          {d.catalogue.partsTitle}
         </Link>
       </div>
 
       <div className="flex items-center justify-between gap-3 border-t border-line/70 px-4 py-2.5 lg:px-8">
         <p className="text-sm text-ink-2">
           <span className="num font-ui text-ink">{total}</span>{" "}
-          {bn ? "টি মেশিন" : total === 1 ? "device" : "devices"}
+          {d.catalogue.deviceCount}
           {low !== undefined && high !== undefined && total > 1 && (
             <span className="num ml-2 hidden text-ink-muted sm:inline">
               {formatTaka(low)} – {formatTaka(high)}
@@ -113,7 +115,7 @@ export default function FilterBar({
           <summary className="flex min-h-[40px] cursor-pointer list-none items-center gap-2 rounded-full border-[1.5px] border-line-strong bg-paper-surface px-4 font-ui text-sm text-ink">
             <span className="text-ink-muted">{d.products.sortBy}</span>
             <span className="max-w-[9rem] truncate">
-              {activeSort.label[lang]}
+              {activeSort.label}
             </span>
             <span aria-hidden="true" className="text-brand">
               ▾
@@ -130,7 +132,7 @@ export default function FilterBar({
                       : "text-ink hover:bg-paper-2"
                   }`}
                 >
-                  {s.label[lang]}
+                  {s.label}
                 </Link>
               </li>
             ))}

@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import ProductsView from "@/components/views/ProductsView";
 import { getSeries } from "@/routes/product";
 import { altLanguages } from "@/lib/site";
+import { fill } from "@/lib/i18n";
+import { getDict } from "@/routes/dict";
 
 export const revalidate = 3600;
 
@@ -9,21 +11,32 @@ type Props = {
   searchParams?: { series?: string; sort?: string; parts?: string; page?: string };
 };
 
+/**
+ * Metadata varies with the filter, because the filtered views are real pages.
+ *
+ * `sort` is deliberately left out of the canonical URL: sorting changes the
+ * order of a list, not its contents, so all four sorts of the same filter
+ * point at one canonical page instead of competing with each other.
+ *
+ * The words themselves come from the CMS. Only the shape is here: which name
+ * goes in the title, and whether a page number is appended.
+ */
 export async function generateMetadata({ searchParams }: Props): Promise<Metadata> {
   const series = searchParams?.series ?? "all";
   const parts = searchParams?.parts === "1";
   const page = Math.max(1, Number(searchParams?.page ?? 1) || 1);
 
-  const all = await getSeries();
+  const [all, d] = await Promise.all([getSeries(), getDict("en")]);
   const active = all.find((s) => String(s.id ?? s.name) === series);
 
   const name = parts
-    ? "Hearing aid batteries and parts"
+    ? d.catalogue.partsTitle
     : active
-    ? `ReSound ${active.name} hearing aids`
-    : "Hearing aid prices in Bangladesh";
+    ? `ReSound ${active.name}`
+    : d.seo.listName;
 
-  const suffix = page > 1 ? ` — page ${page}` : "";
+  const suffix =
+    page > 1 ? fill(d.seo.listPageSuffix, { page: page }) : "";
 
   const params = new URLSearchParams();
   if (series !== "all") params.set("series", series);
@@ -34,10 +47,8 @@ export async function generateMetadata({ searchParams }: Props): Promise<Metadat
   const enPath = qs ? `/en/hearing-aids?${qs}` : "/en/hearing-aids";
 
   return {
-    title: `${name}${suffix} — Senso Hearing Centre`,
-    description: parts
-      ? "ReSound batteries, domes, receivers and spare parts. Senso Hearing Centre, Panthapath, Dhaka."
-      : "The full ReSound range with prices. Which one you need is decided after the hearing test. Senso Hearing Centre, Panthapath, Dhaka.",
+    title: fill(d.seo.listTitle, { name: `${name}${suffix}` }),
+    description: parts ? d.seo.partsDescription : d.seo.listDescription,
     alternates: {
       canonical: enPath,
       languages: altLanguages(path, enPath),

@@ -1,6 +1,7 @@
-import { SITE } from "@/lib/site";
+import type { Clinic } from "@/routes/clinic";
 import { FacebookIcon, YouTubeIcon } from "./Icons";
 import type { Lang } from "@/lib/i18n";
+import type { Dict } from "@/routes/dict";
 
 /**
  * Facebook and YouTube.
@@ -16,24 +17,27 @@ import type { Lang } from "@/lib/i18n";
  */
 export default function SocialLinks({
   lang,
+  clinic,
+  d,
   size = "default",
 }: {
   lang: Lang;
+  clinic: Clinic;
+  d: Dict;
   size?: "default" | "compact";
 }) {
-  const bn = lang === "bn";
   const links = [
     {
-      href: SITE.social.facebook,
+      href: clinic.social.facebook,
       Icon: FacebookIcon,
       name: "Facebook",
-      note: bn ? "প্রতিদিনের খবর ও মেসেঞ্জার" : "Daily posts and Messenger",
+      note: d.social.facebookNote,
     },
     {
-      href: SITE.social.youtube,
+      href: clinic.social.youtube,
       Icon: YouTubeIcon,
       name: "YouTube",
-      note: bn ? "ভিডিও" : "Video",
+      note: d.social.youtubeNote,
     },
   ];
 

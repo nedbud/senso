@@ -1,5 +1,6 @@
 import Image from "next/image";
-import type { Lang } from "@/lib/i18n";
+import { fill, type Lang } from "@/lib/i18n";
+import type { Dict } from "@/routes/dict";
 
 export type Shot = {
   src: string | null;
@@ -28,10 +29,12 @@ export type Shot = {
 export default function ProductGallery({
   shots,
   lang,
+  d,
   title,
 }: {
   shots: Shot[];
   lang: Lang;
+  d: Dict;
   title: string;
 }) {
   const bn = lang === "bn";
@@ -61,10 +64,10 @@ export default function ProductGallery({
     <section id="photos" className="mx-auto max-w-6xl scroll-mt-32 px-4 pt-6 lg:px-8">
       <div className="mb-2.5 flex items-baseline justify-between gap-4">
         <h2 className="font-ui text-sm font-semibold text-ink">
-          {bn ? "ছবি ও ভিডিও" : "Photos and video"}
+          {d.gallery.heading}
         </h2>
         <p className="num font-ui text-xs text-ink-muted">
-          {bn ? `${toBn(n)} টি` : n}
+          {fill(d.gallery.count, { n: bn ? toBn(n) : n })}
         </p>
       </div>
 

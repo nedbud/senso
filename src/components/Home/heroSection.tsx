@@ -1,6 +1,9 @@
 import Image from "next/image";
+import { toBengaliDigits } from "@/lib/site";
 import Link from "next/link";
-import { dict, type Lang } from "@/lib/i18n";
+import { fill, type Lang } from "@/lib/i18n";
+import type { Dict } from "@/routes/dict";
+import type { Clinic } from "@/routes/clinic";
 import AskNaatiButton from "@/components/naati/AskNaatiButton";
 import FactStrip from "@/components/ui/FactStrip";
 
@@ -25,14 +28,20 @@ import FactStrip from "@/components/ui/FactStrip";
  */
 export default function Hero({
   lang,
+  clinic,
   lowPrice,
+  d,
 }: {
   lang: Lang;
+  clinic: Clinic;
   lowPrice?: number;
+  d: Dict;
 }) {
-  const d = dict(lang);
-  const bn = lang === "bn";
   const prefix = lang === "en" ? "/en" : "";
+  const minutes =
+    lang === "bn"
+      ? toBengaliDigits(clinic.testPackage.minutes)
+      : String(clinic.testPackage.minutes);
 
   return (
     <section>
@@ -53,35 +62,25 @@ export default function Hero({
             <p className="font-ui text-sm text-brand">{d.hero.eyebrow}</p>
 
             <h1 className="mt-2 max-w-[13ch] font-display text-hero font-extrabold leading-[1.05] tracking-tightest text-ink">
-              {bn ? "কানে কম শুনছেন?" : "Not hearing well?"}
+              {d.hero.title}
             </h1>
 
             <p className="mt-4 max-w-prose text-lg leading-relaxed text-ink-2">
-              {bn
-                ? "শুরুটা হোক একটা পরীক্ষা দিয়ে। ৩৫ মিনিট, তারপর রিপোর্ট হাতে। মেশিন নেওয়ার সিদ্ধান্ত তার পরে।"
-                : "Start with a hearing test. Thirty-five minutes, and the report is in your hand. Whether to buy anything comes after that."}
+              {fill(d.hero.lede, { minutes })}
             </p>
 
             <div className="mt-6 grid gap-2.5 sm:grid-cols-2 lg:max-w-lg">
               <AskNaatiButton lang={lang} />
             </div>
 
-            <p className="mt-3 text-sm text-ink-muted">
-              {bn
-                ? "ফোনে কষ্ট হলে লিখে পাঠান — আমাদের বেশিরভাগ রোগীর জন্যই ফোন কঠিন।"
-                : "If the phone is hard, write instead — it is for most of our patients."}
-            </p>
+            <p className="mt-3 text-sm text-ink-muted">{d.hero.phoneShort}</p>
           </div>
 
           <div className="order-1 lg:order-2">
             <div className="relative mx-auto aspect-[4/3] w-full max-w-[26rem] lg:max-w-none">
               <Image
                 src="/assets/Images/latest_products/ReSound_OMNIA_461_RIE.png"
-                alt={
-                  bn
-                    ? "ReSound OMNIA ৪৬১ কানের মেশিন — মূল অংশ কানের পেছনে, স্পিকার সরু তার দিয়ে কানের ভেতরে"
-                    : "A ReSound OMNIA 461 hearing aid — the body sits behind the ear, the speaker inside the canal on a thin wire"
-                }
+                alt={d.hero.deviceAlt}
                 fill
                 priority
                 sizes="(max-width: 1024px) 90vw, 520px"
@@ -90,12 +89,12 @@ export default function Hero({
             </div>
 
             <p className="mt-1 text-center text-sm text-ink-muted lg:text-left">
-              {bn ? "ReSound OMNIA ৪৬১ · " : "ReSound OMNIA 461 · "}
+              {d.hero.deviceCaption}
               <Link
                 href={`${prefix}/hearing-aids`}
                 className="underline underline-offset-4 hover:text-ink"
               >
-                {bn ? "সব মডেল ও দাম" : "every model and price"}
+                {d.hero.everyModel}
               </Link>
             </p>
           </div>
@@ -103,7 +102,7 @@ export default function Hero({
       </div>
 
       <div className="mx-auto max-w-6xl px-4 py-6 lg:px-8">
-        <FactStrip lang={lang} lowPrice={lowPrice} />
+        <FactStrip lang={lang} clinic={clinic} d={d} lowPrice={lowPrice} />
       </div>
     </section>
   );
