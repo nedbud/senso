@@ -1,43 +1,44 @@
 import Hero from "@/components/Home/heroSection";
 import BestProducts from "@/components/Home/bestProductsSection";
-import Service from "@/components/Home/serviceSection";
 import TestsSection from "@/components/Home/testsSection";
-import TeamSection from "@/components/Home/teamSection";
-import Partners from "@/components/Home/partnerSection";
+import NumberBand from "@/components/ui/NumberBand";
+import TrustBand from "@/components/Home/trustBand";
 import FaqSection from "@/components/Home/faqSection";
-import Contact from "@/components/Home/contactSection";
+import VisitSection from "@/components/Home/visitSection";
 import { FaqJsonLd, ProductRangeJsonLd } from "@/components/ui/JsonLd";
-import { getBestProducts, getProducts, priceStats } from "@/routes/product";
+import { getBestProducts, getProducts, priceStats, ACCESSORY_SERIES } from "@/routes/product";
 import { FAQ } from "@/lib/faq";
-import { ACCESSORY_SERIES } from "@/routes/product";
 import type { Lang } from "@/lib/i18n";
+
+/** How many questions appear on the home page, and therefore how many are
+ *  marked up. Google asks that FAQ structured data be visible on the page. */
+const FAQ_ON_HOME = 6;
 
 export default async function HomeView({ lang }: { lang: Lang }) {
   const [best, all] = await Promise.all([getBestProducts(), getProducts()]);
 
-  // Fall back to the cheapest real devices if the CMS has nothing flagged
-  // "best", so the homepage is never empty.
   const devices = all.filter((p) => !ACCESSORY_SERIES.includes(p.series));
-  const shown = (best.length ? best : devices).slice(0, 12);
+  const shown = (best.length ? best : devices).slice(0, 6);
   const stats = priceStats(all);
 
   return (
     <>
       <FaqJsonLd
-        items={FAQ[lang].map((f) => ({ question: f.question, answer: f.answer }))}
+        items={FAQ[lang]
+          .slice(0, FAQ_ON_HOME)
+          .map((f) => ({ question: f.question, answer: f.answer }))}
       />
       {stats && (
         <ProductRangeJsonLd low={stats.low} high={stats.high} count={stats.count} />
       )}
 
-      <Hero lang={lang} />
+      <Hero lang={lang} lowPrice={stats?.low} />
       <BestProducts products={shown} lang={lang} />
+      <NumberBand lang={lang} />
       <TestsSection lang={lang} />
-      <Service lang={lang} />
-      <TeamSection lang={lang} />
-      <Partners lang={lang} />
-      <FaqSection lang={lang} />
-      <Contact lang={lang} />
+      <TrustBand lang={lang} />
+      <VisitSection lang={lang} />
+      <FaqSection lang={lang} limit={FAQ_ON_HOME} />
     </>
   );
 }

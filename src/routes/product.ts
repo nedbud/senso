@@ -9,7 +9,17 @@
  * server-rendered and therefore crawlable.
  */
 
-const BASE = process.env.NEXT_PUBLIC_BASE_URL;
+/**
+ * The base URL is normalised rather than trusted.
+ *
+ * `.env.production` carried a trailing slash, so every request became
+ * `https://host//api/senso/...`. That path redirects to the CMS login page,
+ * which returns HTML; `res.json()` threw; the catch below turned it into an
+ * empty list; and an empty list meant `generateStaticParams` produced no
+ * product pages at all. A one-character configuration mistake took the whole
+ * catalogue off the site without a single error in the build log.
+ */
+const BASE = (process.env.NEXT_PUBLIC_BASE_URL ?? "").replace(/\/+$/, "");
 const HOUR = 3600;
 
 export interface ProductMapInterface {
@@ -22,6 +32,30 @@ export interface ProductMapInterface {
   price: string;
   series: string;
   slug: string;
+  /**
+   * The list payload carries the full feature list, not just the detail
+   * payload. That is what lets the catalogue know each device's fitting
+   * range without fetching 109 detail pages.
+   */
+  features?: { value: string }[];
+
+  /**
+   * Attributes the CMS now stores properly, instead of the site inferring
+   * them from the model name. Every one is optional and may be null: null
+   * means nobody has filled it in yet, and `catalogue.ts` falls back to
+   * reading the name exactly as it always did. Nothing here is required for
+   * a product to work.
+   */
+  coverage?: string | null;
+  warranty?: string | null;
+  form_factor?: string | null;
+  power_class?: string | null;
+  battery_type?: string | null;
+  tier?: string | null;
+  system_type?: string | null;
+  channels?: number | null;
+  is_accessory?: boolean | null;
+  fitting_range?: { from: number; to: number } | null;
 }
 
 export interface productsInterface {
@@ -37,13 +71,46 @@ type ApiList = { data?: ProductMapInterface[] };
 async function getJson<T>(url: string, revalidate = HOUR): Promise<T | null> {
   try {
     const res = await fetch(url, { next: { revalidate } });
-    if (!res.ok) return null;
+    if (!res.ok) {
+      warn(`${url} -> HTTP ${res.status}`);
+      return null;
+    }
+    // An HTML login page parses as neither JSON nor an error until you try to
+    // read it, so the content type is checked first and reported by name.
+    const type = res.headers.get("content-type") ?? "";
+    if (!type.includes("json")) {
+      warn(`${url} -> ${type || "unknown content type"}, expected JSON`);
+      return null;
+    }
     return (await res.json()) as T;
-  } catch {
+  } catch (e) {
     // A dead API must not take the whole page down — the phone number, the
     // address and the opening hours still need to render.
+    warn(`${url} -> ${e instanceof Error ? e.message : String(e)}`);
     return null;
   }
+}
+
+function warn(message: string) {
+  console.warn(`[senso api] ${message}`);
+}
+
+/**
+ * Called from `generateStaticParams`. An empty catalogue there is not a
+ * degraded page, it is a site with no products on it — so it fails the build
+ * loudly instead of shipping 404s for every hearing aid.
+ */
+export async function getProductsOrFail(): Promise<ProductMapInterface[]> {
+  const products = await getProducts();
+  if (!products.length) {
+    throw new Error(
+      `[senso api] The product list came back empty from ${BASE}. ` +
+        `Nothing would be built for /hearing-aids. Check NEXT_PUBLIC_BASE_URL ` +
+        `— it must point at the website CMS (cloud.sensohearingdhaka.com), ` +
+        `with no trailing slash.`
+    );
+  }
+  return products;
 }
 
 export async function getBestProducts(): Promise<ProductMapInterface[]> {
@@ -71,6 +138,8 @@ export type SortKey = "best" | "trending" | "leatest" | "asc" | "desc";
 export const ACCESSORY_SERIES = ["Hearign Aid Battery", "No Series"];
 
 export function isAccessory(p: ProductMapInterface) {
+  // The column when it is set, the series name when it is not.
+  if (typeof p.is_accessory === "boolean") return p.is_accessory;
   return ACCESSORY_SERIES.includes(p.series);
 }
 
@@ -149,16 +218,39 @@ export interface ProductInterface {
     avatar: string;
     video_link: string;
     cover_image: string;
+    cover_video_url?: string | null;
     images: { path: string }[];
     features: { value: string }[];
     description: string;
     contents: {
+      id?: number;
       title: string;
       content: string;
       image: string;
       created_at: string;
+      /** overview | who_for | not_for | daily_life | care | questions */
+      kind?: string | null;
+      /** A YouTube or Facebook link, stored as pasted. */
+      video_url?: string | null;
+      /** What the picture shows. */
+      caption?: string | null;
+      /** "bn" | "en" — null on blocks written before the column existed */
+      lang?: string | null;
+      position?: number | null;
     }[];
     created_at: string;
+    meta_title?: string | null;
+    meta_description?: string | null;
+
+    // Same optional attributes as the list payload — see ProductMapInterface.
+    form_factor?: string | null;
+    power_class?: string | null;
+    battery_type?: string | null;
+    tier?: string | null;
+    system_type?: string | null;
+    channels?: number | null;
+    is_accessory?: boolean | null;
+    fitting_range?: { from: number; to: number } | null;
   };
 }
 

@@ -5,24 +5,57 @@
 /* ─────────────────────────────────────────────────────────────────────
    Fonts, self-hosted.
 
-   Split by unicode-range so a page only pulls the script it renders. The
-   Bengali block is kept whole and includes ZWNJ/ZWJ (U+200C-200D) — those
-   control conjunct formation, and separating them from the letters breaks
-   shaping. Never split *within* a script: a shaping cluster must be
-   resolved by one font or conjuncts break at the seam.
+   Display is Anek Bangla at wdth 80 / wght 800 — Condensed ExtraBold.
+   Ek Type's own note on the family is that "it is in the boldest weights
+   that Anek comes alive", and the width axis is the half of the design
+   space most sites never touch. Anek Bangla at plain Bold, normal width,
+   is the default corner of a 40-style family; condensed extrabold is the
+   one that reads as a decision.
 
-   Two weights of body and one of display, ~246KB total. Kept deliberately
-   small: Bengali faces are 4-5x the size of Latin ones because each
-   consonant needs full, half, below-base and post-base forms plus conjunct
-   ligatures. font-display: swap so text is readable at first paint on a
-   slow connection and upgrades when the font lands.
+   Both instances are cut from the variable font with fontTools, so the
+   two-axis 437KB original becomes 53KB and 56KB.
+
+   Split by unicode-range so a page pulls only the script it renders. The
+   Bengali block stays whole and includes ZWNJ/ZWJ (U+200C-200D), which
+   control conjunct formation — separating them from the letters breaks
+   shaping.
    ───────────────────────────────────────────────────────────────────── */
 
 @font-face {
+  font-family: "Anek Display";
+  font-style: normal; font-weight: 800; font-display: swap;
+  src: url("/font/anek-cond-800-bengali.woff2") format("woff2");
+  unicode-range: U+0951-0952, U+0964-0965, U+0980-09FE, U+1CD0, U+1CD2,
+    U+1CD5-1CD6, U+1CD8, U+1CE1, U+1CEA, U+1CED, U+1CF2, U+1CF5-1CF7,
+    U+200C-200D, U+20B9, U+25CC, U+A8F1;
+}
+@font-face {
+  font-family: "Anek Display";
+  font-style: normal; font-weight: 800; font-display: swap;
+  src: url("/font/anek-cond-800-latin.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6,
+    U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193,
+    U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: "Anek UI";
+  font-style: normal; font-weight: 600; font-display: swap;
+  src: url("/font/anek-semi-600-bengali.woff2") format("woff2");
+  unicode-range: U+0951-0952, U+0964-0965, U+0980-09FE, U+1CD0, U+1CD2,
+    U+1CD5-1CD6, U+1CD8, U+1CE1, U+1CEA, U+1CED, U+1CF2, U+1CF5-1CF7,
+    U+200C-200D, U+20B9, U+25CC, U+A8F1;
+}
+@font-face {
+  font-family: "Anek UI";
+  font-style: normal; font-weight: 600; font-display: swap;
+  src: url("/font/anek-semi-600-latin.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6,
+    U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193,
+    U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
   font-family: "Hind Siliguri";
-  font-style: normal;
-  font-weight: 400;
-  font-display: swap;
+  font-style: normal; font-weight: 400; font-display: swap;
   src: url("/font/hind-bengali-400.woff2") format("woff2");
   unicode-range: U+0951-0952, U+0964-0965, U+0980-09FE, U+1CD0, U+1CD2,
     U+1CD5-1CD6, U+1CD8, U+1CE1, U+1CEA, U+1CED, U+1CF2, U+1CF5-1CF7,
@@ -30,19 +63,37 @@
 }
 @font-face {
   font-family: "Hind Siliguri";
-  font-style: normal;
-  font-weight: 400;
-  font-display: swap;
+  font-style: normal; font-weight: 400; font-display: swap;
   src: url("/font/hind-latin-400.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6,
+    U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193,
+    U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+/* Hind's other two weights were already sitting in /font, undeclared, while
+   every `font-medium` and `font-semibold` on body copy was being faked by
+   the browser. Synthesised weight thickens the matra unevenly and fills in
+   the counters of যুক্তাক্ষর — it is the single ugliest thing that can
+   happen to Bangla text. */
+@font-face {
+  font-family: "Hind Siliguri";
+  font-style: normal; font-weight: 500; font-display: swap;
+  src: url("/font/hind-bengali-500.woff2") format("woff2");
+  unicode-range: U+0951-0952, U+0964-0965, U+0980-09FE, U+1CD0, U+1CD2,
+    U+1CD5-1CD6, U+1CD8, U+1CE1, U+1CEA, U+1CED, U+1CF2, U+1CF5-1CF7,
+    U+200C-200D, U+20B9, U+25CC, U+A8F1;
+}
+@font-face {
+  font-family: "Hind Siliguri";
+  font-style: normal; font-weight: 500; font-display: swap;
+  src: url("/font/hind-latin-500.woff2") format("woff2");
   unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6,
     U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193,
     U+2212, U+2215, U+FEFF, U+FFFD;
 }
 @font-face {
   font-family: "Hind Siliguri";
-  font-style: normal;
-  font-weight: 600;
-  font-display: swap;
+  font-style: normal; font-weight: 600; font-display: swap;
   src: url("/font/hind-bengali-600.woff2") format("woff2");
   unicode-range: U+0951-0952, U+0964-0965, U+0980-09FE, U+1CD0, U+1CD2,
     U+1CD5-1CD6, U+1CD8, U+1CE1, U+1CEA, U+1CED, U+1CF2, U+1CF5-1CF7,
@@ -50,35 +101,12 @@
 }
 @font-face {
   font-family: "Hind Siliguri";
-  font-style: normal;
-  font-weight: 600;
-  font-display: swap;
+  font-style: normal; font-weight: 600; font-display: swap;
   src: url("/font/hind-latin-600.woff2") format("woff2");
   unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6,
     U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193,
     U+2212, U+2215, U+FEFF, U+FFFD;
 }
-@font-face {
-  font-family: "Anek Bangla";
-  font-style: normal;
-  font-weight: 700;
-  font-display: swap;
-  src: url("/font/anek-bengali-700.woff2") format("woff2");
-  unicode-range: U+0951-0952, U+0964-0965, U+0980-09FE, U+1CD0, U+1CD2,
-    U+1CD5-1CD6, U+1CD8, U+1CE1, U+1CEA, U+1CED, U+1CF2, U+1CF5-1CF7,
-    U+200C-200D, U+20B9, U+25CC, U+A8F1;
-}
-@font-face {
-  font-family: "Anek Bangla";
-  font-style: normal;
-  font-weight: 700;
-  font-display: swap;
-  src: url("/font/anek-latin-700.woff2") format("woff2");
-  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6,
-    U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193,
-    U+2212, U+2215, U+FEFF, U+FFFD;
-}
-
 
 @layer base {
   :root {
@@ -87,6 +115,13 @@
 
   body {
     @apply bg-paper text-ink font-sans;
+    /* Anek UI is cut at 600 and Anek Display at 800 — one real weight each.
+       Thirty-nine places on this site ask them for 700, and without this the
+       browser obliges by smearing the 600. Refusing synthesis makes it pick
+       the real face instead: what was intended, only clean. */
+    font-synthesis: none;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
     /* Never below 18px: the matra is a 1px stroke and is the first thing to
        disappear at small sizes, and the audience is largely 55+. */
     font-size: 18px;
@@ -97,7 +132,7 @@
   /* Bengali needs more vertical room than Latin — marks sit above the matra
      and conjuncts hang below the baseline. */
   html[lang="bn"] body {
-    line-height: 1.75;
+    line-height: 1.78;
     word-break: normal;
     overflow-wrap: normal;
   }
@@ -112,8 +147,13 @@
   }
 
   h1, h2, h3 {
-    @apply font-display font-bold;
+    @apply font-display;
+    font-weight: 800;
     text-wrap: balance;
+    /* The matra runs continuously across a word; positive tracking severs
+       it and negative tracking collides conjuncts. Bangla display type is
+       set at exactly zero. */
+    letter-spacing: 0;
   }
 
   /* Marks and conjuncts collide with a default underline offset. */
@@ -130,6 +170,14 @@
 }
 
 @layer utilities {
+  /* The leading scale is set for Bangla, where marks sit above the matra and
+     conjuncts hang below it. Latin needs roughly a tenth less at every step,
+     so the same three utilities resolve tighter on the English pages. */
+  html[lang="en"] .leading-snug { line-height: 1.35; }
+  html[lang="en"] .leading-normal { line-height: 1.5; }
+  html[lang="en"] .leading-relaxed { line-height: 1.6; }
+
+
   /* Prices and phone numbers: Western digits, aligned in columns, and never
      reordered at a punctuation boundary. */
   .num {

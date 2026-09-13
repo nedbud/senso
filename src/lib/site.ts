@@ -40,16 +40,44 @@ export const SITE = {
     geo: { lat: 23.7515441, lng: 90.3863803 },
   },
 
-  phones: ["+8801322926207", "+8801805051278", "+88029128045"],
-  phoneDisplay: "01322-926207",
+  phones: ["+8801322926297", "+8801805051278", "+88029128045"],
+  phoneDisplay: "01322-926297",
   phoneDisplay2: "01805-051278",
   // Senso gave two WhatsApp numbers; the first is the primary.
-  whatsapp: "8801322926207",
+  whatsapp: "8801322926297",
   whatsappAlt: "8801805051278",
   email: "info@sensohearingdhaka.com", // not given on the form — verify
+  /**
+   * Not for display. Senso asked for the trade licence number to be taken
+   * off the site, so nothing renders it — not the footer, not the trust
+   * band, not the structured data. It stays here because it is a real fact
+   * about the business that may be needed for a form or a submission one
+   * day, and because leaving it recorded with this note is what stops it
+   * quietly reappearing on a page later.
+   */
   tradeLicence: "TRAD/DSCC/242022/2019",
 
   facebookPageId: "212954412245615",
+
+  /**
+   * Where Senso already exists online.
+   *
+   * These are not decoration. Google uses `sameAs` to tie a website to the
+   * profiles of the same business elsewhere, which is how a search for
+   * "senso hearing" resolves to one entity instead of three unrelated
+   * results — and the Facebook page is the one with the history on it:
+   * thousands of followers and years of posts and replies. Linking the two
+   * in both directions is what makes the site part of that entity rather
+   * than a fourth stranger claiming the name.
+   *
+   * The YouTube channel is real but has nothing on it yet. It is declared
+   * here for the entity link and listed in the footer, and deliberately not
+   * promoted anywhere as something to go and watch.
+   */
+  social: {
+    facebook: "https://www.facebook.com/sensohearingcenter/",
+    youtube: "https://www.youtube.com/@sensohearingcenter",
+  },
 
   // 0 = Sunday ... 6 = Saturday. Friday and government holidays closed.
   hours: {

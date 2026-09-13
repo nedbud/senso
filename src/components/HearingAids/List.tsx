@@ -25,9 +25,11 @@ export default function ProductList({
   }
 
   return (
-    <div className="grid grid-cols-2 gap-4 md:grid-cols-3">
-      {products.map((item) => (
-        <ProductCard key={item.slug} item={item} lang={lang} />
+    <div className="grid grid-cols-2 gap-4 md:grid-cols-3 xl:grid-cols-4">
+      {products.map((item, i) => (
+        // The first row is above the fold on every screen size, so those
+        // images are the ones worth loading eagerly.
+        <ProductCard key={item.slug} item={item} lang={lang} priority={i < 4} />
       ))}
     </div>
   );

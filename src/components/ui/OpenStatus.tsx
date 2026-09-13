@@ -27,9 +27,9 @@ export default function OpenStatus({ lang }: { lang: Lang }) {
   }
 
   return (
-    <div className="flex flex-wrap items-center gap-x-4 gap-y-2 rounded-lg border border-line bg-paper-surface px-4 py-3 text-[17px]">
+    <div className="flex flex-wrap items-center gap-x-4 gap-y-2 rounded-lg border border-line bg-paper-surface px-4 py-3 text-base">
       <span
-        className={`inline-flex items-center gap-2 rounded-full px-3 py-0.5 font-display font-semibold text-base ${
+        className={`inline-flex items-center gap-2 rounded-full px-3 py-0.5 font-ui text-base ${
           state.isOpen
             ? "bg-open-tint text-open"
             : "bg-shut-tint text-shut"

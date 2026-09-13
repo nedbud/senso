@@ -16,7 +16,7 @@ export default function Partners({ lang }: { lang: Lang }) {
   return (
     <section className="bg-paper-2 py-12">
       <div className="mx-auto flex max-w-3xl flex-col gap-4 px-4 lg:px-8">
-        <h2 className="text-[clamp(24px,4.6vw,31px)] text-ink">
+        <h2 className="text-2xl text-ink">
           {bn ? "ReSound-এর অনুমোদিত ডিলার" : "An authorised ReSound dealer"}
         </h2>
 
@@ -39,12 +39,7 @@ export default function Partners({ lang }: { lang: Lang }) {
           )}
         </p>
 
-        <ul className="flex flex-col gap-1.5 text-[17px] text-ink-2">
-          <li>
-            {bn
-              ? `ট্রেড লাইসেন্স: ${SITE.tradeLicence}`
-              : `Trade licence: ${SITE.tradeLicence}`}
-          </li>
+        <ul className="flex flex-col gap-1.5 text-base text-ink-2">
           <li>
             {bn
               ? `যেসব হাসপাতালের সাথে কাজ: ${SITE.hospitals.join(", ")}`
@@ -71,7 +66,7 @@ export default function Partners({ lang }: { lang: Lang }) {
             href={SITE.dealer.proofUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="font-display font-semibold text-brand underline"
+            className="font-ui text-brand underline"
           >
             {d.common.verify}
           </a>

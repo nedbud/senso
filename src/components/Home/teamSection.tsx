@@ -30,7 +30,7 @@ export default function TeamSection({ lang }: { lang: Lang }) {
 
   return (
     <section id="team" className="mx-auto max-w-3xl px-4 py-12 lg:px-8">
-      <h2 className="mb-3 text-[clamp(24px,4.6vw,31px)] text-ink">
+      <h2 className="mb-3 text-2xl text-ink">
         {bn ? "কে কখন বসেন" : "Who sits when"}
       </h2>
       <p className="mb-6 max-w-prose text-xl text-ink-2">
@@ -46,14 +46,14 @@ export default function TeamSection({ lang }: { lang: Lang }) {
             className="flex flex-col gap-1 px-4 py-4 sm:flex-row sm:items-baseline sm:justify-between sm:gap-4"
           >
             <div>
-              <p className="font-display text-lg font-semibold text-ink">
+              <p className="font-ui text-lg font-semibold text-ink">
                 {bn ? member.name : member.nameEn}
               </p>
-              <p className="text-[15.5px] text-ink-muted">
+              <p className="text-sm text-ink-muted">
                 {ROLE[member.role][lang]}
               </p>
             </div>
-            <p className="num whitespace-nowrap text-[16px] text-ink-2">
+            <p className="num whitespace-nowrap text-base text-ink-2">
               {DAYS[member.days][lang]},{" "}
               {clockLabel(member.from, lang)} – {clockLabel(member.to, lang)}
             </p>
@@ -61,7 +61,7 @@ export default function TeamSection({ lang }: { lang: Lang }) {
         ))}
       </ul>
 
-      <p className="mt-3 text-[15.5px] text-ink-muted">
+      <p className="mt-3 text-sm text-ink-muted">
         {bn
           ? `শুক্রবার ও সরকারি ছুটির দিন বন্ধ। সিরিয়াল ছাড়া এলে গড়ে ${toBengaliDigits(2)} ঘণ্টা পর্যন্ত অপেক্ষা করতে হতে পারে।`
           : "Closed Friday and on government holidays. Without an appointment the wait averages up to two hours."}
