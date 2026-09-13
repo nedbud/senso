@@ -1,3 +1,4 @@
+import { toBengaliDigits } from "@/lib/site";
 import { clockLabel, fill, type Lang } from "@/lib/i18n";
 import type { Dict } from "@/routes/dict";
 import type { Clinic } from "@/routes/clinic";
@@ -31,6 +32,13 @@ export default function TrustBand({
 }) {
   const brand = clinic.dealer.brand;
 
+  // Bangla numerals in Bangla prose. The figures moved out of this file and
+  // into the clinic record, and they arrived as plain numbers — so the band
+  // printed "2007 সাল থেকে" and "2 বছর" next to a number band already setting
+  // ২০০৭ and ৩৫ in Bangla, on the same screen.
+  const n = (v: number | string) =>
+    lang === "bn" ? toBengaliDigits(v) : String(v);
+
   return (
     <section id="about" className="bg-paper-deep text-ink-inverse">
       <div className="mx-auto max-w-5xl px-4 py-10 lg:px-8">
@@ -62,15 +70,15 @@ export default function TrustBand({
               <div>
                 <dt className="text-white/50">{d.trust.sinceLabel}</dt>
                 <dd className="num mt-0.5 font-medium">
-                  {fill(d.trust.sinceValue, { year: clinic.foundedYear })}
+                  {fill(d.trust.sinceValue, { year: n(clinic.foundedYear) })}
                 </dd>
               </div>
               <div>
                 <dt className="text-white/50">{d.trust.warrantyLabel}</dt>
                 <dd className="mt-0.5 font-medium">
                   {fill(d.trust.warrantyValue, {
-                    years: clinic.warranty.years,
-                    months: clinic.warranty.followUpMonths,
+                    years: n(clinic.warranty.years),
+                    months: n(clinic.warranty.followUpMonths),
                   })}
                 </dd>
               </div>
